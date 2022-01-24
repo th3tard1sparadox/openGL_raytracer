@@ -15,25 +15,25 @@
 // Data would normally be read from files
 GLfloat vertices[] =
 {
-	-0.5f,-0.5f,0.0f,
-	-0.5f,0.5f,0.0f,
-	0.5f,-0.5f,0.0f
+    -0.5f,-0.5f,0.0f,
+    -0.5f,0.5f,0.0f,
+    0.5f,-0.5f,0.0f
 };
 
-GLfloat xTranslationMatrix[] = 
+GLfloat xTranslationMatrix[] =
 {
-  1.0f,0.0f,0.0f,0.5f,
-  0.0f,1.0f,0.0f,0.0f,
-  0.0f,0.0f,1.0f,0.0f,
-  0.0f,0.0f,0.0f,1.0f 
+    1.0f,0.0f,0.0f,0.5f,
+    0.0f,1.0f,0.0f,0.0f,
+    0.0f,0.0f,1.0f,0.0f,
+    0.0f,0.0f,0.0f,1.0f
 };
 
-GLfloat xRotationMatrix[] = 
+GLfloat xRotationMatrix[] =
 {
-  cos(0.0f),-sin(0.0f),0.0f,0.0f,
-  sin(0.0f),cos(0.0f),0.0f,0.0f,
-  0.0f,0.0f,1.0f,0.0f,
-  0.0f,0.0f,0.0f,1.0f 
+    cos(0.0f),-sin(0.0f),0.0f,0.0f,
+    sin(0.0f),cos(0.0f),0.0f,0.0f,
+    0.0f,0.0f,1.0f,0.0f,
+    0.0f,0.0f,0.0f,1.0f
 };
 
 GLuint program;
@@ -43,76 +43,76 @@ unsigned int vertexArrayObjID;
 
 void init(void)
 {
-	// vertex buffer object, used for uploading the geometry
-	unsigned int vertexBufferObjID;
-	// Reference to shader program
+    // vertex buffer object, used for uploading the geometry
+    unsigned int vertexBufferObjID;
+    // Reference to shader program
 
-	dumpInfo();
+    dumpInfo();
 
-	// GL inits
-	glClearColor(0.5,0.2,0.5,0);
-	glDisable(GL_DEPTH_TEST);
-	printError("GL inits");
+    // GL inits
+    glClearColor(0.5,0.2,0.5,0);
+    glDisable(GL_DEPTH_TEST);
+    printError("GL inits");
 
-	// Load and compile shader
-	program = loadShaders("lab1-3.vert", "lab1-3.frag");
-  glUseProgram(program);
-	printError("init shader");
-	
-	// Upload geometry to the GPU:
-	
-	// Allocate and activate Vertex Array Object
-	glGenVertexArrays(1, &vertexArrayObjID);
-	glBindVertexArray(vertexArrayObjID);
-	// Allocate Vertex Buffer Objects
-	glGenBuffers(1, &vertexBufferObjID);
-	
-	// VBO for vertex data
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjID);
-	glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(glGetAttribLocation(program, "in_Position"), 3, GL_FLOAT, GL_FALSE, 0, 0); 
-	glEnableVertexAttribArray(glGetAttribLocation(program, "in_Position"));
-  glUniformMatrix4fv(glGetUniformLocation(program, "xRotationMatrix"), 1, GL_TRUE, xRotationMatrix);
-  glUniformMatrix4fv(glGetUniformLocation(program, "xTranslationMatrix"), 1, GL_TRUE, xTranslationMatrix);
-	
-  glutRepeatingTimer(16);
+    // Load and compile shader
+    program = loadShaders("lab1-3.vert", "lab1-3.frag");
+    glUseProgram(program);
+    printError("init shader");
 
-	// End of upload of geometry
-	
-	printError("init arrays");
+    // Upload geometry to the GPU:
+
+    // Allocate and activate Vertex Array Object
+    glGenVertexArrays(1, &vertexArrayObjID);
+    glBindVertexArray(vertexArrayObjID);
+    // Allocate Vertex Buffer Objects
+    glGenBuffers(1, &vertexBufferObjID);
+
+    // VBO for vertex data
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjID);
+    glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(glGetAttribLocation(program, "in_Position"), 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(glGetAttribLocation(program, "in_Position"));
+    glUniformMatrix4fv(glGetUniformLocation(program, "xRotationMatrix"), 1, GL_TRUE, xRotationMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(program, "xTranslationMatrix"), 1, GL_TRUE, xTranslationMatrix);
+
+    glutRepeatingTimer(16);
+
+    // End of upload of geometry
+
+    printError("init arrays");
 }
 
 
 void display(void)
 {
-	printError("pre display");
+    printError("pre display");
 
-  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 100.0;
-  xRotationMatrix[0] = (float)cos(t);
-  xRotationMatrix[1] = (float)-sin(t); 
-  xRotationMatrix[4] = (float)sin(t); 
-  xRotationMatrix[5] = (float)cos(t); 
+    GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 100.0;
+    xRotationMatrix[0] = (float)cos(t);
+    xRotationMatrix[1] = (float)-sin(t);
+    xRotationMatrix[4] = (float)sin(t);
+    xRotationMatrix[5] = (float)cos(t);
 
-  glUniformMatrix4fv(glGetUniformLocation(program, "xRotationMatrix"), 1, GL_TRUE, xRotationMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(program, "xRotationMatrix"), 1, GL_TRUE, xRotationMatrix);
 
-	// clear the screen
-	glClear(GL_COLOR_BUFFER_BIT);
+    // clear the screen
+    glClear(GL_COLOR_BUFFER_BIT);
 
-	glBindVertexArray(vertexArrayObjID);	// Select VAO
-	glDrawArrays(GL_TRIANGLES, 0, 3);	// draw object
-	
-	printError("display");
-	
-	glutSwapBuffers();
+    glBindVertexArray(vertexArrayObjID);	// Select VAO
+    glDrawArrays(GL_TRIANGLES, 0, 3);	// draw object
+
+    printError("display");
+
+    glutSwapBuffers();
 }
 
 int main(int argc, char *argv[])
 {
-	glutInit(&argc, argv);
-	glutInitContextVersion(3, 2);
-	glutCreateWindow ("GL3 white triangle example");
-	glutDisplayFunc(display); 
-	init ();
-	glutMainLoop();
-	return 0;
+    glutInit(&argc, argv);
+    glutInitContextVersion(3, 2);
+    glutCreateWindow ("GL3 white triangle example");
+    glutDisplayFunc(display);
+    init ();
+    glutMainLoop();
+    return 0;
 }
