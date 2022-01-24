@@ -13,8 +13,8 @@
 // Data would normally be read from files
 GLfloat vertices[] =
 {
-	-0.5f,-0.5f,0.0f,
-	-0.5f,0.5f,0.0f,
+	-0.2f,-0.5f,0.0f,
+	-0.5f,0.2f,0.0f,
 	0.5f,-0.5f,0.0f
 };
 
@@ -31,7 +31,7 @@ void init(void)
 	dumpInfo();
 
 	// GL inits
-	glClearColor(0.2,0.2,0.5,0);
+	glClearColor(0.5,0.2,0.5,0);
 	glDisable(GL_DEPTH_TEST);
 	printError("GL inits");
 
