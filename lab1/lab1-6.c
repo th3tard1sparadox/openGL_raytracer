@@ -93,16 +93,11 @@ void init(void)
 
     // GL inits
     glClearColor(0.5,0.2,0.5,0);
-    glDisable(GL_DEPTH_TEST);
-    printError("GL inits");
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
+    printError("GL inits");
 
     // Load and compile shader
     program = loadShaders("lab1-6.vert", "lab1-6.frag");
-    glUseProgram(program);
     printError("init shader");
 
     // Upload geometry to the GPU:
@@ -128,12 +123,12 @@ void init(void)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &colorBufferObjID);
+    // glGenBuffers(1, &colorBufferObjID);
 
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), color, GL_STATIC_DRAW);
-    glVertexAttribPointer(glGetAttribLocation(program, "Color"), 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(glGetAttribLocation(program, "Color"));
+    // glBindBuffer(GL_ARRAY_BUFFER, colorBufferObjID);
+    // glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), color, GL_STATIC_DRAW);
+    // glVertexAttribPointer(glGetAttribLocation(program, "Color"), 3, GL_FLOAT, GL_FALSE, 0, 0);
+    // glEnableVertexAttribArray(glGetAttribLocation(program, "Color"));
 
     glutRepeatingTimer(16);
 
@@ -176,6 +171,7 @@ int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
     glutInitContextVersion(3, 2);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow ("GL3 white triangle example");
     glutDisplayFunc(display);
     init ();
