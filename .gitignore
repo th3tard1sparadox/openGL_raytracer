@@ -1,1 +1,8 @@
-*.o
+*
+!*/
+
+# Track theese filetypes.
+!.gitignore
+!*.c
+!*.vert
+!*.frag
