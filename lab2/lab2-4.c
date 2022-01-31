@@ -9,69 +9,28 @@
 #include "MicroGlut.h"
 #include "LittleOBJLoader.h"
 #define PI 3.1415f
+#define near 1.0
+#define far 30.0
+#define right 0.5
+#define left -0.5
+#define top 0.5
+#define bottom -0.5
+
 // uses framework OpenGL
 // uses framework Cocoa
 
 // Globals
 // Data would normally be read from files
-GLfloat xTranslationMatrix[] =
+GLfloat projectionMatrix[] =
 {
-    1.0f,0.0f,0.0f,0.5f,
-    0.0f,1.0f,0.0f,0.0f,
-    0.0f,0.0f,1.0f,0.0f,
-    0.0f,0.0f,0.0f,1.0f
+    2.0f*near/(right-left), 0.0f, (right+left)/(right-left), 0.0f,
+    0.0f, 2.0f*near/(top-bottom), (top+bottom)/(top-bottom), 0.0f,
+    0.0f, 0.0f, -(far + near)/(far - near), -2*far*near/(far - near),
+    0.0f, 0.0f, -1.0f, 0.0f
 };
 
-GLfloat xRotationMatrix[] =
-{
-    1.0f,0.0f,0.0f,0.0f,
-    0.0f,1.0f,0.0f,0.0f,
-    0.0f,0.0f,1.0f,0.0f,
-    0.0f,0.0f,0.0f,1.0f
-};
-
-GLfloat zRotationMatrix[] =
-{
-    1.0f,0.0f,0.0f,0.0f,
-    0.0f,1.0f,0.0f,0.0f,
-    0.0f,0.0f,1.0f,0.0f,
-    0.0f,0.0f,0.0f,1.0f
-};
-
-GLfloat color[] =
-{
-    1.0f, 0.0f, 0.0f, //R
-    0.0f, 1.0f, 0.0f, //G
-    0.0f, 0.0f, 1.0f, //B
-};
-
-GLfloat vertices[] =
-{
-    0.0f,0.5f,0.0f,
-    -0.5f,-0.5f,0.5f,
-    0.5f,-0.5f,0.5f,
-
-    0.0f,0.5f,0.0f,
-    0.5f,-0.5f,0.5f,
-    0.5f,-0.5f,-0.5f,
-
-    0.0f,0.5f,0.0f,
-    0.5f,-0.5f,-0.5f,
-    -0.5f,-0.5f,-0.5f,
-
-    0.0f,0.5f,0.0f,
-    -0.5f,-0.5f,-0.5f,
-    -0.5f,-0.5f,0.5f,
-
-    -0.5f,-0.5f,-0.5f,
-    0.5f,-0.5f,-0.5f,
-    -0.5f,-0.5f,0.5f,
-
-    0.5f,-0.5f,-0.5f,
-    0.5f,-0.5f,0.5f,
-    -0.5f,-0.5f,0.5f
-};
-
+mat4 rotz, rotx, trans, total;
+mat4 lookMatrix;
 Model *m;
 GLuint program;
 GLuint myTex;
@@ -98,15 +57,18 @@ void init(void)
     glClearColor(0.5,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);
     printError("GL inits");
-
+    lookMatrix = lookAt( 2.0, -2.0, -5.0,
+                         0.0, 0.0, -5.0,
+                         0.0, 1.0, 0.0);
+        
     // Load and compile shader
-    program = loadShaders("lab2-2.vert", "lab2-2.frag");
+    program = loadShaders("lab2-4.vert", "lab2-4.frag");
     printError("init shader");
 
     // Upload geometry to the GPU:
     glBindTexture(GL_TEXTURE_2D, myTex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     
     // Allocate and activate Vertex Array Object
     glGenVertexArrays(1, &bunnyVertexArrayObjID);
@@ -137,13 +99,6 @@ void init(void)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
 
-    // glGenBuffers(1, &colorBufferObjID);
-
-    // glBindBuffer(GL_ARRAY_BUFFER, colorBufferObjID);
-    // glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), color, GL_STATIC_DRAW);
-    // glVertexAttribPointer(glGetAttribLocation(program, "Color"), 3, GL_FLOAT, GL_FALSE, 0, 0);
-    // glEnableVertexAttribArray(glGetAttribLocation(program, "Color"));
-
     glutRepeatingTimer(16);
 
     // End of upload of geometry
@@ -157,20 +112,17 @@ void display(void)
     printError("pre display");
 
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    xRotationMatrix[0] = (float)cos(t);
-    xRotationMatrix[1] = (float)-sin(t);
-    xRotationMatrix[4] = (float)sin(t);
-    xRotationMatrix[5] = (float)cos(t);
 
-    zRotationMatrix[5] = (float)cos(t);
-    zRotationMatrix[6] = (float)-sin(t);
-    zRotationMatrix[9] = (float)sin(t);
-    zRotationMatrix[10] = (float)cos(t);
-
+    trans = T(0, 0, (float)sin(t*5)-5);
+    rotx = Rx(t);
+    rotz = Rz(t);
+    total = Mult(trans, Mult(rotx, rotz));
+    
     glUniform1f(glGetUniformLocation(program, "t"), t);
     glUniform1i(glGetUniformLocation(program, "texUnit"), 0); // Texture unit 0
-    glUniformMatrix4fv(glGetUniformLocation(program, "xRotationMatrix"), 1, GL_TRUE, xRotationMatrix);
-    glUniformMatrix4fv(glGetUniformLocation(program, "zRotationMatrix"), 1, GL_TRUE, zRotationMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(program, "lookMatrix"), 1, GL_TRUE, lookMatrix.m);
+    glUniformMatrix4fv(glGetUniformLocation(program, "projectionMatrix"), 1, GL_TRUE, projectionMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
 
     // clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

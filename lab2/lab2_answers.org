@@ -1,0 +1,22 @@
+* Question Section 1
+** How are the textures coordinates mapped on the bunny? Can you see what geometry was used?
+   s goes to the right and t goes upwards
+** What kind of procedural texture did you make?
+   Pshycadelic bunny inspired by the psychadelic teapot by Ingemar.
+* Question Section 2
+** How can you make a texture repeat multiple times over the bunny?
+   By multiplying the amount of time we read the texture. 
+** Why can't we just pass the texture object to the shader? .....
+   We have limited memory, loading to many textures will overload it.
+* Question Section 3
+** How did you move the bunny to get it in view?
+   Move it back in Z-direction.
+* Question Section 4
+** Given a certain vector for v, is there some place you can't place the camera?
+   No
+* Question Section 5
+** Did you implement your light calculations in the vertex or fragment shader? So, which kind of shading did you implement?
+   
+** Some geometry data must be vec4, others are just as well vec3's. Which ones, and why? How about vertices, light source, normal vectors...?
+
+

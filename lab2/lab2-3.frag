@@ -10,5 +10,5 @@ void main(void)
 {
         float a = sin(texCoord.s * t * 30);
         float b = texCoord.t;
-        out_Color = texture(texUnit, texCoord*5);
+        out_Color = texture(texUnit, texCoord*5)*vec4(normal, 1.0);
 }
