@@ -6,3 +6,5 @@
 !*.c
 !*.vert
 !*.frag
+!*.obj
+!*.tga
