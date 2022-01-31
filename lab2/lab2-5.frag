@@ -8,7 +8,8 @@ uniform sampler2D texUnit;
 
 void main(void)
 {
-        float a = sin(texCoord.s * t * 30);
-        float b = texCoord.t;
-        out_Color = texture(texUnit, texCoord*5)*vec4(normal, 1.0);
+        const vec3 light = vec3(0.58, 0.58, 0.58);
+        float shading = dot(normalize(normal), light);
+        shading = clamp(shading, 0, 1);
+        out_Color = texture(texUnit, texCoord*5)*vec4(shading, shading, shading, 1.0);
 }

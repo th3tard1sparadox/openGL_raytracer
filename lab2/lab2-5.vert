@@ -11,7 +11,8 @@ out vec2 texCoord;
 
 void main(void)
 {
-  normal = in_Normal;
+  mat3 normalMatrix = mat3(mdlMatrix);
+  normal = in_Normal * normalMatrix;
   texCoord = inTexCoord;
   gl_Position = projectionMatrix * lookMatrix * mdlMatrix * vec4(in_Position, 1.0);
 }
