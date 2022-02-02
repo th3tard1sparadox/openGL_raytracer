@@ -62,7 +62,7 @@ void init(void)
                        0.0, 1.0, 0.0);
 
   // Load and compile shader
-  program = loadShaders("lab2-5.vert", "lab2-5.frag");
+  program = loadShaders("lab2-6.vert", "lab2-6.frag");
   printError("init shader");
 
   // Upload geometry to the GPU:
@@ -114,9 +114,9 @@ void display(void)
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 
   /* trans = T(0, 0, (float)sin(t*10)-5); */
-  trans = T(0,0,-5);
   rotx = Rx(t/10);
   rotz = Rz(t/10);
+  trans = T(0,0,-5);
   total = Mult(trans, Mult(rotx, rotz));
 
   glUniform1f(glGetUniformLocation(program, "t"), t);
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
   glutInit(&argc, argv);
   glutInitContextVersion(3, 2);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-  glutCreateWindow ("Phong");
+  glutCreateWindow ("not phong");
   glutDisplayFunc(display);
   init ();
   glutMainLoop();
