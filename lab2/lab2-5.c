@@ -52,7 +52,7 @@ void init(void)
     m = LoadModel("res/bunnyplus.obj");
     LoadTGATextureSimple("res/maskros512.tga", &myTex);
     dumpInfo();
-    
+
     // GL inits
     glClearColor(0.5,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);
@@ -60,7 +60,7 @@ void init(void)
     lookMatrix = lookAt( 2.0, -2.0, -5.0,
                          0.0, 0.0, -5.0,
                          0.0, 1.0, 0.0);
-        
+
     // Load and compile shader
     program = loadShaders("lab2-5.vert", "lab2-5.frag");
     printError("init shader");
@@ -69,7 +69,7 @@ void init(void)
     glBindTexture(GL_TEXTURE_2D, myTex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
+
     // Allocate and activate Vertex Array Object
     glGenVertexArrays(1, &bunnyVertexArrayObjID);
     glGenBuffers(1, &bunnyVertexBufferObjID);
@@ -113,11 +113,11 @@ void display(void)
 
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 
-    trans = T(0, 0, (float)sin(t*5)-5);
+    trans = T(0, 0, (float)sin(t*10)-5);
     rotx = Rx(t);
     rotz = Rz(t);
     total = Mult(trans, Mult(rotx, rotz));
-    
+
     glUniform1f(glGetUniformLocation(program, "t"), t);
     glUniform1i(glGetUniformLocation(program, "texUnit"), 0); // Texture unit 0
     glUniformMatrix4fv(glGetUniformLocation(program, "lookMatrix"), 1, GL_TRUE, lookMatrix.m);
