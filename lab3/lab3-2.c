@@ -38,33 +38,45 @@ GLuint texture[2];
 // vertex array object
 unsigned int bunnyVertexArrayObjID;
 
-int startX = 0;
-int startY = 0;
+vec3 rot = {0,0,0};
+float startX = 0;
+void rotCam(int x, int y) {
 
-void moveCam(int x, int y) {
-  vec3 p;
-  mat4 m;
-  
-  p.y = x - startX;
-  p.x = -(startY - y);
-  p.z = 0;
-
-  mat3 worldCoordView = mat4tomat3(lookMatrix);
-  p = MultMat3Vec3(InvertMat3(worldCoordView), p);
-
-  m = ArbRotate(p, sqrt(p.x*p.x + p.y*p.y)/100);
-  mtvMat = Mult(m, mtvMat);
+  lookMatrix.m[3] += sin(x - startX);
+  lookMatrix.m[5] += cos(x - startX);
 
   startX = x;
-  startY = y;
 
   glutPostRedisplay();
 }
 
+vec3 mov = {0,0,0};
+void moveCam(unsigned char c, int x, int y){
+  vec3 tmp = {lookMatrix.m[0]-lookMatrix.m[3], 0, lookMatrix.m[2]-lookMatrix.m[5]};
+  switch(c){
+  case 'w':
+    mov = ScalarMult(normalize(tmp), 0.1);
+    glutPostRedisplay();
+    break;
+  case 's':
+    mov = ScalarMult(normalize(tmp), -0.1);
+    glutPostRedisplay();
+    break;
+  default:
+    mov = (vec3) {0,0,0};
+  }
+}
+
 void init(void)
 {
+
+  lookMatrix = lookAt( 20, 10, 20,
+                       0.0, 5.0, 0.0,
+                       0.0, 1.0, 0.0);
+  
   // vertex buffer object, used for uploading the geometry
-  glutPassiveMotionFunc(&moveCam);
+  //glutPassiveMotionFunc(&rotCam);
+  //glutKeyboardFunc(&moveCam);
 
   // Reference to shader program
   mtvMat = T(0,0,0);
@@ -99,14 +111,16 @@ void display(void)
 {
   printError("pre display");
 
+  vec3 p = {lookMatrix.m[0] + mov.x, lookMatrix.m[1] + mov.y, lookMatrix.m[2] + mov.z};
+  vec3 r = {0.0, 5.0, 0.0};
+  vec3 u = {0.0, 1.0, 0.0};
+
+  lookMatrix = lookAtv(p, r, u);
+
   // clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-
-  lookMatrix = lookAt( 20.0, 20.0, 20.0,
-                       0.0, 5.0, 0.0,
-                       0.0, 1.0, 0.0);
 
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
   DrawModel(balcony, program, "in_Position", "in_Normal", "inTexCoord");
