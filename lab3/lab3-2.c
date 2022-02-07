@@ -10,7 +10,7 @@
 #include "LittleOBJLoader.h"
 #define PI 3.1415f
 #define near 1.0
-#define far 40.0
+#define far 1000.0
 #define right 0.5
 #define left -0.5
 #define top 0.5
@@ -29,8 +29,8 @@ GLfloat projectionMatrix[] =
   0.0f, 0.0f, -1.0f, 0.0f
 };
 
-mat4 transBal, transRoof, transWall, transBlade, rotOri;
-mat4 lookMatrix, totalLookMatrix;
+mat4 mtvMat, transBlade, rotOri;
+mat4 lookMatrix;
 Model *balcony, *roof, *wall, *blade;
 GLuint program;
 GLuint texture[2];
@@ -38,12 +38,36 @@ GLuint texture[2];
 // vertex array object
 unsigned int bunnyVertexArrayObjID;
 
+int startX = 0;
+int startY = 0;
+
+void moveCam(int x, int y) {
+  vec3 p;
+  mat4 m;
+  
+  p.y = x - startX;
+  p.x = -(startY - y);
+  p.z = 0;
+
+  mat3 worldCoordView = mat4tomat3(lookMatrix);
+  p = MultMat3Vec3(InvertMat3(worldCoordView), p);
+
+  m = ArbRotate(p, sqrt(p.x*p.x + p.y*p.y)/100);
+  mtvMat = Mult(m, mtvMat);
+
+  startX = x;
+  startY = y;
+
+  glutPostRedisplay();
+}
+
 void init(void)
 {
   // vertex buffer object, used for uploading the geometry
-  unsigned int colorBufferObjID;
+  glutPassiveMotionFunc(&moveCam);
 
   // Reference to shader program
+  mtvMat = T(0,0,0);
   rotOri = T(4.6, 9.2, 0);
   blade = LoadModel("windmill/blade.obj");
   balcony = LoadModel("windmill/windmill-balcony.obj");
@@ -57,7 +81,7 @@ void init(void)
   printError("GL inits");
 
   // Load and compile shader
-  program = loadShaders("lab3-1.vert", "lab3-1.frag");
+  program = loadShaders("lab3-2.vert", "lab3-2.frag");
   printError("init shader");
 
   // Upload geometry to the GPU:
@@ -80,36 +104,32 @@ void display(void)
 
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 
-  transBal = T(0,0,0);
-  transRoof = T(0,0,0);
-  transWall = T(0,0,0);
-
-  lookMatrix = lookAt( 20*sin(t/3), 20*sin(t*2)+10, 20*sin((t/3)-PI/2),
+  lookMatrix = lookAt( 20.0, 20.0, 20.0,
                        0.0, 5.0, 0.0,
                        0.0, 1.0, 0.0);
 
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBal.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
   DrawModel(balcony, program, "in_Position", "in_Normal", "inTexCoord");
 
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transRoof.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
   DrawModel(roof, program, "in_Position", "in_Normal", "inTexCoord");
 
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transWall.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
   DrawModel(wall, program, "in_Position", "in_Normal", "inTexCoord");
 
-  transBlade = Mult(rotOri, Rx(t*5));
+  transBlade = Mult(mtvMat, Mult(rotOri, Rx(t*5)));
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", "inTexCoord");
 
-  transBlade = Mult(rotOri, Rx((t+PI/2)*5));
+  transBlade = Mult(mtvMat, Mult(rotOri, Rx((t+PI/2)*5)));
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", "inTexCoord");
 
-  transBlade = Mult(rotOri, Rx((t+PI)*5));
+  transBlade = Mult(mtvMat, Mult(rotOri, Rx((t+PI)*5)));
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", "inTexCoord");
 
-  transBlade = Mult(rotOri, Rx((t+PI*3/2)*5));
+  transBlade = Mult(mtvMat, Mult(rotOri, Rx((t+PI*3/2)*5)));
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", "inTexCoord");
 
