@@ -1,0 +1,19 @@
+* Question Section 1
+** How can you get all four blades to rotate with just one time-dependent rotation matrix?
+   By offsetting the rotation by PI/2 at each step.
+** How do you make the wings follow the body's movements?
+   By moving everything to Origin before moving the body.
+* Question Section 2
+** What kind of control did you implement?
+   Mouse control of camera rotation!
+** Can you make this kind of control in some other way than manipulating a "look-at" matrix?
+   Yes! That is what we did! We could just enter the values into the
+   lookat matrix instead.
+* Question Section 3
+** How did you handle the camera matrix for the skybox?
+** How did you represent the objects? Is this a good way to manage a scene or would you do it differently for a "real" application?
+** What special considerations are needed when rendering a skybox?
+** What is the problem with the skybox object used in the lab? (The problem doesn't have to be corrected.)
+* Question Section 4
+** How do you generate a vector from the surface to the eye?
+** Which vectors need renormalization in the fragment shader?

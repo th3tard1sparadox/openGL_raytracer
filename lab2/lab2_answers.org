@@ -7,13 +7,16 @@
 ** How can you make a texture repeat multiple times over the bunny?
    By multiplying the amount of time we read the texture.
 ** Why can't we just pass the texture object to the shader? .....
-   We have limited memory, loading to many textures will overload it.
+   We have limited memory, loading to many textures will overload
+   it. We only have 16 texture units! (Little man with only one
+   picture in front of him).
 * Question Section 3
 ** How did you move the bunny to get it in view?
    Move it back in Z-direction.
 * Question Section 4
 ** Given a certain vector for v, is there some place you can't place the camera?
-   No
+   We cannot look at the same position as we are. Cannot look straight
+   along the up vector.
 * Question Section 5
 ** Did you implement your light calculations in the vertex or fragment shader? So, which kind of shading did you implement?
    In the fragment shader. PHONG shading.
