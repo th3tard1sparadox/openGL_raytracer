@@ -23,11 +23,11 @@
    is wished. Color is usually vec4.
 * Question Section 6
 ** Was the difference big? If not, why?
-    no big difference although with a brighter light the gouraud shading
-    is a little brighter along the edges. It not being that different may
-    be because the texture hiding imperfections or the model being small
-    in the window so it's difficult to see.
+   no big difference although with a brighter light the gouraud shading
+   is a little brighter along the edges. It not being that different may
+   be because the texture hiding imperfections or the model being small
+   in the window so it's difficult to see.
 * Question Section 7
 ** If you rotate an object or rotate the camera, what matrices are affected?
-    the mdlMatrix aka model-to-view matrix is affected by moving the object,
-    while the lookAt/camera matrix is affected by moving the camera.
+   the mdlMatrix aka model-to-view matrix is affected by moving the object,
+   while the lookAt/camera matrix is affected by moving the camera.
