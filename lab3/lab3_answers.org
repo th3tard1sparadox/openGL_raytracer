@@ -5,15 +5,20 @@
    By moving everything to Origin before moving the body.
 * Question Section 2
 ** What kind of control did you implement?
-   Mouse control of camera rotation!
+   Mouse control of camera rotation! And keyboard control of camera pos.
 ** Can you make this kind of control in some other way than manipulating a "look-at" matrix?
-   Yes! That is what we did! We could just enter the values into the
-   lookat matrix instead.
+   Yes, although this is tricky cus matrix manipulation is
+   hard.... Pls help
 * Question Section 3
 ** How did you handle the camera matrix for the skybox?
+   We removed translation and we only rotate it.
 ** How did you represent the objects? Is this a good way to manage a scene or would you do it differently for a "real" application?
+   I would make a list of objs and if we have a large structure of
+   multiple parts i would make a function.
 ** What special considerations are needed when rendering a skybox?
+   DO NOT TRANSLATE! And make z buffer no good.
 ** What is the problem with the skybox object used in the lab? (The problem doesn't have to be corrected.)
+   It's half cube!
 * Question Section 4
 ** How do you generate a vector from the surface to the eye?
 ** Which vectors need renormalization in the fragment shader?
