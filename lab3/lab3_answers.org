@@ -20,5 +20,9 @@
 ** What is the problem with the skybox object used in the lab? (The problem doesn't have to be corrected.)
    It's half cube!
 * Question Section 4
+** Where is the camera in view coordinates?
+   In origo.
+** Why was blue facing the camera when visualizing the normal vectors?
+** For light source 3, who did we get a white area in the distance for the specular light but not for the diffuse?
 ** How do you generate a vector from the surface to the eye?
 ** Which vectors need renormalization in the fragment shader?
