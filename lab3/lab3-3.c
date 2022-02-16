@@ -42,7 +42,7 @@ GLfloat tex_coords[] =
   20.0f,20.0f
 };
 
-GLint indices[] = {0, 1, 2, 1, 3, 2};
+GLuint indices[] = {0, 1, 2, 1, 3, 2};
 
 // uses framework OpenGL
 // uses framework Cocoa
@@ -108,7 +108,7 @@ void init(void)
 
   pos = (vec3) {20, 1, 20};
   forward = (vec3) {-0.5, 0, -0.5};
-  
+
   // vertex buffer object, used for uploading the geometry
   glutPassiveMotionFunc(&rotCam);
   glutKeyboardFunc(&moveCam);
@@ -124,7 +124,7 @@ void init(void)
   kettle = LoadModel("../lab2/res/teapot.obj");
 
   vec3 color = (vec3) {0,0,0};
-  ground = LoadDataToModel(vertices, vertex_normals, tex_coords, &color, indices, 4, 6);
+  ground = LoadDataToModel((vec3*)vertices, (vec3*)vertex_normals, (vec2*)tex_coords, &color, indices, 4, 6);
 
   LoadTGATextureSimple("SkyBox512.tga", &skyboxTex);
 
