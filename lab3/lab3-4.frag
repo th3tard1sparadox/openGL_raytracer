@@ -1,7 +1,14 @@
 #version 150
 
-out vec4 out_Color;
 in vec3 normal;
+in vec3 surfacePos;
+
+out vec4 out_Color;
+
+uniform vec3 lightSourcesDirPosArr[4];
+uniform vec3 lightSourcesColorArr[4];
+uniform float specularExponent;
+uniform bool isDirectional[4];
 
 void main(void)
 {

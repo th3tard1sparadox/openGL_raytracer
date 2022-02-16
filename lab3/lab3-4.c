@@ -127,7 +127,7 @@ void init(void)
   program = loadShaders("lab3-4.vert", "lab3-4.frag");
   glUseProgram(program);
 
-  pos = (vec3) {20, 1, 20};
+  pos = (vec3) {10, 1, 10};
   forward = (vec3) {-0.5, 0, -0.5};
 
   // vertex buffer object, used for uploading the geometry
@@ -157,7 +157,7 @@ void init(void)
   printError("GL inits");
 
   // Load and compile shader
-  glUniformMatrix4fv(glGetUniformLocation(program, "projectionMatrix"), 1, GL_TRUE, projectionMatrix);
+  glUniformMatrix4fv(glGetUniformLocation(program, "worldToScreenMatrix"), 1, GL_TRUE, projectionMatrix);
   glUniform3fv(glGetUniformLocation(program, "lightSourcesDirPosArr"), 4, &lightSourcesDirectionsPositions[0].x);
   glUniform3fv(glGetUniformLocation(program, "lightSourcesColorArr"), 4, &lightSourcesColorsArr[0].x);
   glUniform1iv(glGetUniformLocation(program, "isDirectional"), 4, isDirectional);
@@ -167,7 +167,7 @@ void init(void)
   printError("init shader");
 
   // Upload geometry to the GPU:
-  glUniformMatrix4fv(glGetUniformLocation(texProgram, "projectionMatrix"), 1, GL_TRUE, projectionMatrix);
+  glUniformMatrix4fv(glGetUniformLocation(texProgram, "worldToScreenMatrix"), 1, GL_TRUE, projectionMatrix);
   glUniform1i(glGetUniformLocation(texProgram, "texUnit"), 0);
 
   glutRepeatingTimer(16);
@@ -195,7 +195,7 @@ void display(void)
   mtvMat.m[3] = 0;
   mtvMat.m[7] = 0;
   mtvMat.m[11] = 0;
-  glUniformMatrix4fv(glGetUniformLocation(texProgram, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
+  glUniformMatrix4fv(glGetUniformLocation(texProgram, "modelToViewMatrix"), 1, GL_TRUE, mtvMat.m);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, skyboxTex);
   DrawModel(sky, texProgram, "in_Position", NULL, "inTexCoord");
@@ -204,9 +204,9 @@ void display(void)
   glUseProgram(program);
 
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-
+  
   mtvMat = T(0,0,0);
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, mtvMat.m);
   glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[0]);
   DrawModel(ground, program, "in_Position", "in_Normal", NULL);
   glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[1]);
@@ -215,27 +215,27 @@ void display(void)
   DrawModel(wall, program, "in_Position", "in_Normal", NULL);
 
   transBlade = Mult(mtvMat, Mult(rotOri, Rx(t*5)));
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", NULL);
 
   transBlade = Mult(mtvMat, Mult(rotOri, Rx((t+PI/2)*5)));
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", NULL);
 
   transBlade = Mult(mtvMat, Mult(rotOri, Rx((t+PI)*5)));
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", NULL);
 
   transBlade = Mult(mtvMat, Mult(rotOri, Rx((t+PI*3/2)*5)));
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", NULL);
 
   mtvMat = T(20, 0, 20);
-  glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, mtvMat.m);
   glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[2]);
   DrawModel(kettle, program, "in_Position", "in_Normal", NULL);
 
-  glUniformMatrix4fv(glGetUniformLocation(program, "lookMatrix"), 1, GL_TRUE, lookMatrix.m);
+  glUniformMatrix4fv(glGetUniformLocation(program, "viewToWorldMatrix"), 1, GL_TRUE, lookMatrix.m);
   printError("display");
 
   glutSwapBuffers();
