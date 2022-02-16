@@ -17,6 +17,18 @@
 #define bottom -0.5
 #define kGroundSize 100.0f
 
+vec3 lightSourcesColorsArr[] = {{1.0f, 0.0f, 0.0f}, // Red light
+                                {0.0f, 1.0f, 0.0f}, // Green light
+                                {0.0f, 0.0f, 1.0f}, // Blue light
+                                {1.0f, 1.0f, 1.0f}}; // White light
+
+GLint isDirectional[] = {0,0,1,1};
+
+vec3 lightSourcesDirectionsPositions[] = {{10.0f, 5.0f, 0.0f}, // Red light, positional
+                                          {0.0f, 5.0f, 10.0f}, // Green light, positional
+                                          {-1.0f, 0.0f, 0.0f}, // Blue light along X
+                                          {0.0f, 0.0f, -1.0f}}; // White light along Z
+
 GLfloat vertices[] =
 {
   -kGroundSize,0.0f,-kGroundSize,
@@ -30,7 +42,7 @@ GLfloat vertex_normals[] =
 {
   0.0f,1.0f,0.0f,
   0.0f,1.0f,0.0f,
-  0.0f,1.0f,0.0f, 
+  0.0f,1.0f,0.0f,
   0.0f,1.0f,0.0f
 };
 
@@ -38,7 +50,7 @@ GLfloat tex_coords[] =
 {
   0.0f,0.0f,
   0.0f,20.0f,
-  20.0f,0.0f, 
+  20.0f,0.0f,
   20.0f,20.0f
 };
 
@@ -108,7 +120,7 @@ void init(void)
 
   pos = (vec3) {20, 1, 20};
   forward = (vec3) {-0.5, 0, -0.5};
-  
+
   // vertex buffer object, used for uploading the geometry
   glutPassiveMotionFunc(&rotCam);
   glutKeyboardFunc(&moveCam);
@@ -203,7 +215,7 @@ void display(void)
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, transBlade.m);
   DrawModel(blade, program, "in_Position", "in_Normal", NULL);
 
-  mtvMat = T(-10, 0, -23);
+  mtvMat = T(20, 0, 20);
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
   DrawModel(kettle, program, "in_Position", "in_Normal", NULL);
 
