@@ -29,6 +29,8 @@ vec3 lightSourcesDirectionsPositions[] = {{10.0f, 5.0f, 0.0f}, // Red light, pos
                                           {-1.0f, 0.0f, 0.0f}, // Blue light along X
                                           {0.0f, 0.0f, -1.0f}}; // White light along Z
 
+GLfloat specularExponent[] = {100.0, 200.0, 60.0};
+
 GLfloat vertices[] =
 {
   -kGroundSize,0.0f,-kGroundSize,
@@ -149,6 +151,10 @@ void init(void)
 
   // Load and compile shader
   glUniformMatrix4fv(glGetUniformLocation(program, "projectionMatrix"), 1, GL_TRUE, projectionMatrix);
+  glUniform3fv(glGetUniformLocation(program, "lightSourcesDirPosArr"), 4, &lightSourcesDirectionsPositions[0].x);
+  glUniform3fv(glGetUniformLocation(program, "lightSourcesColorArr"), 4, &lightSourcesColorsArr[0].x);
+  glUniform1iv(glGetUniformLocation(program, "isDirectional"), 4, isDirectional);
+
 
   texProgram = loadShaders("lab3-4_tex.vert", "lab3-4_tex.frag");
   printError("init shader");
@@ -194,7 +200,9 @@ void display(void)
 
   mtvMat = T(0,0,0);
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
+  glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[0]);
   DrawModel(ground, program, "in_Position", "in_Normal", NULL);
+  glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[1]);
   DrawModel(balcony, program, "in_Position", "in_Normal", NULL);
   DrawModel(roof, program, "in_Position", "in_Normal", NULL);
   DrawModel(wall, program, "in_Position", "in_Normal", NULL);
@@ -217,6 +225,7 @@ void display(void)
 
   mtvMat = T(20, 0, 20);
   glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, mtvMat.m);
+  glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[2]);
   DrawModel(kettle, program, "in_Position", "in_Normal", NULL);
 
   glUniformMatrix4fv(glGetUniformLocation(program, "lookMatrix"), 1, GL_TRUE, lookMatrix.m);
