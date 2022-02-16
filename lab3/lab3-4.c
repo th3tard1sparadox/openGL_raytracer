@@ -127,8 +127,8 @@ void init(void)
   program = loadShaders("lab3-4.vert", "lab3-4.frag");
   glUseProgram(program);
 
-  pos = (vec3) {10, 1, 10};
-  forward = (vec3) {-0.5, 0, -0.5};
+  pos = (vec3) {30, 1, -25};
+  forward = (vec3) {-0.4, 0, 0.6};
 
   // vertex buffer object, used for uploading the geometry
   glutPassiveMotionFunc(&rotCam);
@@ -204,7 +204,7 @@ void display(void)
   glUseProgram(program);
 
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-  
+
   mtvMat = T(0,0,0);
   glUniformMatrix4fv(glGetUniformLocation(program, "modelToViewMatrix"), 1, GL_TRUE, mtvMat.m);
   glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent[0]);

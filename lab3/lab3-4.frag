@@ -1,7 +1,7 @@
 #version 150
 
 in vec3 normal;
-in vec3 surfacePos;
+in vec3 surface;
 
 out vec4 out_Color;
 
@@ -15,5 +15,5 @@ void main(void)
   const vec3 light = vec3(0.6, 0.6, 0.6);
   float shading = dot(normalize(normal), light);
   shading = clamp(shading, 0, 1);
-  out_Color = vec4(shading, shading, shading, 1.0);
+  out_Color = vec4(surface,1.0) * vec4(shading, shading, shading, 1.0);
 }
