@@ -13,7 +13,14 @@ uniform bool isDirectional[4];
 void main(void)
 {
   const vec3 light = vec3(0.6, 0.6, 0.6);
-  float shading = dot(normalize(normal), light);
-  shading = clamp(shading, 0, 1);
-  out_Color = vec4(surface,1.0) * vec4(shading, shading, shading, 1.0);
+  float shading1 = dot(normal, lightSourcesDirPosArr[2]);
+  float shading2 = dot(normal, lightSourcesDirPosArr[3]);
+  shading1 = clamp(shading1, 0, shading1);
+  shading2 = clamp(shading2, 0, shading2);
+
+  vec3 lightColor1 = lightSourcesColorArr[2];
+  vec3 lightColor2 = lightSourcesColorArr[3];
+  vec3 totalColor = shading1 * lightColor1  + shading2 * lightColor2;
+
+  out_Color = vec4(totalColor, 1.0);
 }
