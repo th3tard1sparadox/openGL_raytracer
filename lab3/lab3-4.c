@@ -17,46 +17,52 @@
 #define bottom -0.5
 #define kGroundSize 100.0f
 
-vec3 lightSourcesColorsArr[] = {{1.0f, 0.0f, 0.0f}, // Red light
-                                {0.0f, 1.0f, 0.0f}, // Green light
-                                {0.0f, 0.0f, 1.0f}, // Blue light
-                                {1.0f, 1.0f, 1.0f}}; // White light
+vec3 lightSourcesColorsArr[] =
+  {
+    {1.0f, 0.0f, 0.0f}, // Red light
+    {0.0f, 1.0f, 0.0f}, // Green light
+    {0.0f, 0.0f, 1.0f}, // Blue light
+    {1.0f, 1.0f, 1.0f}, // White light
+  };
 
 GLint isDirectional[] = {0,0,1,1};
 
-vec3 lightSourcesDirectionsPositions[] = {{10.0f, 5.0f, 0.0f}, // Red light, positional
-                                          {0.0f, 5.0f, 10.0f}, // Green light, positional
-                                          {-1.0f, 0.0f, 0.0f}, // Blue light along X
-                                          {0.0f, 0.0f, -1.0f}}; // White light along Z
+vec3 lightSourcesDirectionsPositions[] =
+  {
+    {10.0f, 5.0f, 0.0f}, // Red light, positional
+    {0.0f, 5.0f, 10.0f}, // Green light, positional
+    {-1.0f, 0.0f, 0.0f}, // Blue light along X
+    {0.0f, 0.0f, -1.0f}, // White light along Z
+  };
 
 GLfloat specularExponent[] = {100.0, 200.0, 60.0};
 
 GLfloat vertices[] =
-{
-  -kGroundSize,0.0f,-kGroundSize,
-  -kGroundSize,0.0f,kGroundSize,
-  kGroundSize,-0.0f,-kGroundSize,
-  kGroundSize,-0.0f,kGroundSize
-};
+  {
+    -kGroundSize,0.0f,-kGroundSize,
+    -kGroundSize,0.0f,kGroundSize,
+    kGroundSize,-0.0f,-kGroundSize,
+    kGroundSize,-0.0f,kGroundSize
+  };
 
 
 GLfloat vertex_normals[] =
-{
-  0.0f,1.0f,0.0f,
-  0.0f,1.0f,0.0f,
-  0.0f,1.0f,0.0f,
-  0.0f,1.0f,0.0f
-};
+  {
+    0.0f,1.0f,0.0f,
+    0.0f,1.0f,0.0f,
+    0.0f,1.0f,0.0f,
+    0.0f,1.0f,0.0f
+  };
 
 GLfloat tex_coords[] =
-{
-  0.0f,0.0f,
-  0.0f,20.0f,
-  20.0f,0.0f,
-  20.0f,20.0f
-};
+  {
+    0.0f,0.0f,
+    0.0f,20.0f,
+    20.0f,0.0f,
+    20.0f,20.0f
+  };
 
-GLint indices[] = {0, 1, 2, 1, 3, 2};
+GLuint indices[] = {0, 1, 2, 1, 3, 2};
 
 // uses framework OpenGL
 // uses framework Cocoa
@@ -64,12 +70,12 @@ GLint indices[] = {0, 1, 2, 1, 3, 2};
 // Globals
 // Data would normally be read from files
 GLfloat projectionMatrix[] =
-{
-  2.0f*near/(right-left), 0.0f, (right+left)/(right-left), 0.0f,
-  0.0f, 2.0f*near/(top-bottom), (top+bottom)/(top-bottom), 0.0f,
-  0.0f, 0.0f, -(far + near)/(far - near), -2*far*near/(far - near),
-  0.0f, 0.0f, -1.0f, 0.0f
-};
+  {
+    2.0f*near/(right-left), 0.0f, (right+left)/(right-left), 0.0f,
+    0.0f, 2.0f*near/(top-bottom), (top+bottom)/(top-bottom), 0.0f,
+    0.0f, 0.0f, -(far + near)/(far - near), -2*far*near/(far - near),
+    0.0f, 0.0f, -1.0f, 0.0f
+  };
 
 mat4 mtvMat, transBlade, rotOri;
 mat4 lookMatrix;
@@ -84,7 +90,8 @@ unsigned int bunnyVertexArrayObjID;
 
 vec3 rot = {0,0,0};
 float startX = 0;
-void rotCam(int x, int y) {
+void rotCam(int x, int y)
+{
 
   float ang = (x - startX) * 0.005;
   float oldx = forward.x;
@@ -138,7 +145,7 @@ void init(void)
   kettle = LoadModel("../lab2/res/teapot.obj");
 
   vec3 color = (vec3) {0,0,0};
-  ground = LoadDataToModel(vertices, vertex_normals, tex_coords, &color, indices, 4, 6);
+  ground = LoadDataToModel((vec3*)vertices, (vec3*)vertex_normals, (vec2*)tex_coords, &color, indices, 4, 6);
 
   LoadTGATextureSimple("SkyBox512.tga", &skyboxTex);
 
