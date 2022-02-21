@@ -38,7 +38,6 @@ void main(void)
 
     vec3 reflection = reflect(-source, normalize(normal));
     vec3 viewDir = normalize(mat3(viewToWorldMatrix) * (cameraPos - surface));
-    // vec3 viewDir = normalize(cameraPos - surface);
 
     float specStrength = 0.0;
     if (dot(source, normalize(normal)) > 0.0) {
