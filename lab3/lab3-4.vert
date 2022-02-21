@@ -13,7 +13,7 @@ uniform mat4 worldToScreenMatrix;
 
 void main(void)
 {
-  normal = normalize(mat3(viewToWorldMatrix) * in_Normal);
-  surface = (modelToViewMatrix * vec4(in_Position, 1.0)).xyz;
+  normal = mat3(viewToWorldMatrix) * in_Normal;
+  surface = vec3(modelToViewMatrix * vec4(in_Position, 1.0));
   gl_Position = worldToScreenMatrix * viewToWorldMatrix * modelToViewMatrix * vec4(in_Position, 1.0);
 }

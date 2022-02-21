@@ -127,7 +127,7 @@ void init(void)
   program = loadShaders("lab3-4.vert", "lab3-4.frag");
   glUseProgram(program);
 
-  pos = (vec3) {30, 1, -25};
+  pos = (vec3) {30, 10, -25};
   forward = (vec3) {-0.4, 0, 0.6};
 
   // vertex buffer object, used for uploading the geometry
@@ -162,7 +162,6 @@ void init(void)
   glUniform3fv(glGetUniformLocation(program, "lightSourcesColorArr"), 4, &lightSourcesColorsArr[0].x);
   glUniform1iv(glGetUniformLocation(program, "isDirectional"), 4, isDirectional);
 
-
   texProgram = loadShaders("lab3-4_tex.vert", "lab3-4_tex.frag");
   printError("init shader");
 
@@ -185,6 +184,8 @@ void display(void)
   vec3 u = {0,1,0};
   lookMatrix = lookAtv(pos, VectorAdd(forward, pos), u);
 
+  float posDisplay[] = {pos.x, pos.y, pos.z};
+
   // clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -202,6 +203,8 @@ void display(void)
   glEnable(GL_DEPTH_TEST);
 
   glUseProgram(program);
+  glUniform3fv(glGetUniformLocation(program, "cameraPos"), 1, posDisplay);
+  printError("help");
 
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 
