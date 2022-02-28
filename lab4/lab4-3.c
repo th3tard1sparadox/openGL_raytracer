@@ -27,12 +27,62 @@ Model* GenerateTerrain(TextureData *tex)
 		{
 // Vertex array. You need to scale this properly
 			vertexArray[(x + z * tex->width)].x = x / 1.0;
-			vertexArray[(x + z * tex->width)].y = tex->imageData[(x + z * tex->width) * (tex->bpp/8)] / 100.0;
+			vertexArray[(x + z * tex->width)].y = tex->imageData[(x + z * tex->width) * (tex->bpp/8)] / 10.0;
 			vertexArray[(x + z * tex->width)].z = z / 1.0;
+    }
+	for (x = 0; x < tex->width; x++)
+		for (z = 0; z < tex->height; z++)
+		{
 // Normal vectors. You need to calculate these.
-			normalArray[(x + z * tex->width)].x = 0.0;
-			normalArray[(x + z * tex->width)].y = 1.0;
-			normalArray[(x + z * tex->width)].z = 0.0;
+      int neighbors = 0;
+      
+      vec3 A = vertexArray[(x + z * tex->width)];
+      vec3 neiNorms[4];
+      if(x != 0) { // can check left
+        if(z != 0) { // can check up
+          vec3 B = vertexArray[((x - 1) + z * tex->width)];
+          vec3 C = vertexArray[(x + (z - 1) * tex->width)];
+          neiNorms[neighbors] = CalcNormalVector(A, C, B);
+          neighbors++;
+        }
+        if(z != tex->height-1) { // can check down
+          vec3 B = vertexArray[(x + (z + 1) * tex->width)];
+          vec3 C = vertexArray[((x - 1) + z * tex->width)];
+          neiNorms[neighbors] = CalcNormalVector(A, C, B);
+          neighbors++;
+        }
+      }
+      if(x == tex->width-1) { // can check right
+        if(z != 0) { // can check up
+          vec3 B = vertexArray[(x + (z - 1) * tex->width)];
+          vec3 C = vertexArray[((x + 1) + z * tex->width)];
+          neiNorms[neighbors] = CalcNormalVector(A, C, B);
+          neighbors++;
+        }
+        if(z != tex->height-1) { // can check down
+          vec3 B = vertexArray[((x + 1) + z * tex->width)];
+          vec3 C = vertexArray[(x + (z + 1) * tex->width)];
+          neiNorms[neighbors] = CalcNormalVector(A, C, B);
+          neighbors++;
+        }
+      }
+
+      vec3 norm = {0,0,0};
+      for(int i = 0; i < neighbors; i++) {
+        norm.x += neiNorms[i].x;
+        norm.y += neiNorms[i].y;
+        norm.z += neiNorms[i].z;
+      }
+
+      norm.x = norm.x / neighbors;
+      norm.y = norm.y / neighbors;
+      norm.z = norm.z / neighbors;
+ 
+      norm = normalize(norm);
+        
+			normalArray[(x + z * tex->width)].x = norm.x;
+			normalArray[(x + z * tex->width)].y = norm.y;
+			normalArray[(x + z * tex->width)].z = norm.z;
 // Texture coordinates. You may want to scale them.
 			texCoordArray[(x + z * tex->width)].x = x; // (float)x / tex->width;
 			texCoordArray[(x + z * tex->width)].y = z; // (float)z / tex->height;
@@ -117,16 +167,16 @@ void init(void)
 	glDisable(GL_CULL_FACE);
 	printError("GL inits");
 
-	projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 50.0);
+	projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 100000.0);
 
-  pos = (vec3) {30, 10, -25};
+  pos = (vec3) {30, 50, -25};
   forward = (vec3) {-0.4, 0, 0.6};
 
   glutPassiveMotionFunc(&rotCam);
   glutKeyboardFunc(&moveCam);
 
 	// Load and compile shader
-	program = loadShaders("terrain.vert", "terrain.frag");
+	program = loadShaders("terrain_light.vert", "terrain_light.frag");
 	glUseProgram(program);
 	printError("init shader");
 	
