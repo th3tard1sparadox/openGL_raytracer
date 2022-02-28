@@ -1,0 +1,13 @@
+* Question Section 1
+** What kind of data does the heightmap image data hold? What range is the heightmap data?
+   The different pixels shade represent the height of a certain
+   vertex. [0-255]
+** The terrain is 4x4. How many polygons does it draw?
+   It draws 18.
+
+* Question Section 2
+** Did you need to extend your camera movement code? How?
+   No!
+
+* Question Section 3
+** Which method did you use to find the normal vector?

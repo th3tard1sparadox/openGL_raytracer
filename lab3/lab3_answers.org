@@ -23,6 +23,10 @@
 ** Where is the camera in view coordinates?
    In origo.
 ** Why was blue facing the camera when visualizing the normal vectors?
+   Because the same coordinate for outward facing in view coordinates
+   is blue in RGB.
 ** For light source 3, who did we get a white area in the distance for the specular light but not for the diffuse?
 ** How do you generate a vector from the surface to the eye?
+   You do (cameraPos - surface)
 ** Which vectors need renormalization in the fragment shader?
+   The normal vector and direction vector.
