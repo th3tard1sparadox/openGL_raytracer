@@ -9,4 +9,5 @@
 !*.obj
 !*.tga
 !*.org
+!*.pdf
 !makefile
