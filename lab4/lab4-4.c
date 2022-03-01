@@ -9,6 +9,7 @@
 #include "LoadTGA.h"
 
 mat4 projectionMatrix;
+vec3 *vertexArray;
 
 Model* GenerateTerrain(TextureData *tex)
 {
@@ -16,7 +17,7 @@ Model* GenerateTerrain(TextureData *tex)
 	int triangleCount = (tex->width-1) * (tex->height-1) * 2;
 	int x, z;
 	
-	vec3 *vertexArray = (vec3 *)malloc(sizeof(GLfloat) * 3 * vertexCount);
+	vertexArray = (vec3 *)malloc(sizeof(GLfloat) * 3 * vertexCount);
 	vec3 *normalArray = (vec3 *)malloc(sizeof(GLfloat) * 3 * vertexCount);
 	vec2 *texCoordArray = (vec2 *)malloc(sizeof(GLfloat) * 2 * vertexCount);
 	GLuint *indexArray = malloc(sizeof(GLuint) * triangleCount*3);
@@ -118,7 +119,7 @@ Model* GenerateTerrain(TextureData *tex)
 
 
 // vertex array object
-Model *m, *m2, *tm;
+Model *m, *m2, *tm, *oct;
 // Reference to shader program
 GLuint program;
 GLuint tex1, tex2;
@@ -169,11 +170,13 @@ void init(void)
 
 	projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 100000.0);
 
-  pos = (vec3) {30, 50, -25};
+  pos = (vec3) {20, 50, 20};
   forward = (vec3) {-0.4, 0, 0.6};
 
   glutPassiveMotionFunc(&rotCam);
   glutKeyboardFunc(&moveCam);
+
+  oct = LoadModel("octagon.obj");
 
 	// Load and compile shader
 	program = loadShaders("terrain_light.vert", "terrain_light.frag");
@@ -191,6 +194,36 @@ void init(void)
 	printError("init terrain");
 }
 
+float findH(vec3 objPos) {
+  int x = (int)floor(objPos.x);
+  int z = (int)floor(objPos.z);
+
+  float dx = objPos.x - x;
+  float dz = objPos.z - z;
+
+  vec2 v1 = {x, z};
+  vec2 v2 = {x + 1, z};
+  vec2 v3 = {x, z + 1};
+
+  if(dx + dz > 1) {
+    v1.x = x + 1;
+    v1.y = z + 1;
+  }
+
+  float h1 = vertexArray[(int)(v1.x + v1.y * ttex.width)].y;
+  float h2 = vertexArray[(int)(v2.x + v2.y * ttex.width)].y;
+  float h3 = vertexArray[(int)(v3.x + v3.y * ttex.width)].y;
+
+  float w1 = ((v2.y - v3.y) * (x + dx - v3.x) + (v3.x - v2.x) * (z + dz - v3.y)) / 
+             ((v2.y - v3.y) * (v1.x - v3.x) + (v3.x - v2.x) * (v1.y - v3.y));
+  float w2 = ((v3.y - v1.y) * (x + dx - v3.x) + (v1.x - v3.x) * (z + dz - v3.y)) /
+             ((v2.y - v3.y) * (v1.x - v3.x) + (v3.x - v2.x) * (v1.y - v3.y));
+  float w3 = 1 - w1 - w2;
+
+  return w1 * h1 + w2 * h2 + w3 * h3;
+
+}
+
 void display(void)
 {
 	// clear the screen
@@ -205,8 +238,17 @@ void display(void)
 	// Build matrix
 	
   vec3 u = {0,1,0};
+  pos.y = findH(pos) + 3;
 	camMatrix = lookAtv(pos, VectorAdd(forward, pos), u);
 
+  vec3 objPos = {VectorAdd(ScalarMult(forward, 50), pos).x, VectorAdd(forward, pos).y, VectorAdd(ScalarMult(forward, 50), pos).z};
+
+  modelView = T(objPos.x, findH(objPos), objPos.z);
+
+	total = Mult(camMatrix, modelView);
+	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
+  DrawModel(oct, program, "inPosition", "inNormal", NULL);
+  
 	modelView = IdentityMatrix();
 	total = Mult(camMatrix, modelView);
 	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
