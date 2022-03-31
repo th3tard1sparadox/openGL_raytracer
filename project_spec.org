@@ -1,0 +1,24 @@
+#+OPTIONS: toc:nil
+#+OPTIONS: date:nil
+#+OPTIONS: num:nil
+
+#+TITLE: Raytracer in Room
+#+AUTHOR: Annie Wång (annwa858), Victor Lells (vicle728)
+
+* Summary
+  We have a room which have different lightsources and uses raytracing
+  to light the room.
+
+* Will Do
+  - Raytraced lighting
+  - Room (6 walls enclosing space the space in a box)
+  - Several light sources
+  - Several stationary and moving objects
+  - Stationary camera position
+
+* Might do
+  - Moving camera (rotation)
+  - Moving camera (follow curve)
+  - Window with parallel light
+  - Transparent object (glass/fabric)
+  - Raytraced reflections

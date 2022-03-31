@@ -1,0 +1,23 @@
+* Question Section 1
+** What kind of data does the heightmap image data hold? What range is the heightmap data?
+   The different pixels shade represent the height of a certain
+   vertex. [0-255]
+** The terrain is 4x4. How many polygons does it draw?
+   It draws 18.
+
+* Question Section 2
+** Did you need to extend your camera movement code? How?
+   No!
+
+* Question Section 3
+** Which method did you use to find the normal vector?
+   The first one!
+
+* Question Section 4
+** How did you figure out what surface to use?
+   We found it by simply taking the object position which we had in
+   world coordinates.
+** How did you calculate the height from the surface?
+   We used triangle interpolation with barycentric coordinates.
+
+* Question Section 5
