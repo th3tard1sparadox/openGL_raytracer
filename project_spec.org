@@ -12,8 +12,9 @@
 * Will Do
   - Raytraced lighting
   - Room (6 walls enclosing space the space in a box)
+    - Divide space into cells
   - Several light sources
-  - Several stationary and moving objects
+  - Several stationary and moving low poly-objects
   - Stationary camera position
 
 * Might do
@@ -21,4 +22,6 @@
   - Moving camera (follow curve)
   - Window with parallel light
   - Transparent object (glass/fabric)
+  - Hogh poly complex obejcts
   - Raytraced reflections
+

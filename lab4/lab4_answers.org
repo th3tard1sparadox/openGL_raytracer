@@ -21,3 +21,12 @@
    We used triangle interpolation with barycentric coordinates.
 
 * Question Section 5
+** What kind of multitexturing function did you implement?
+   We based it on height!
+
+* Question Section 6
+** How did you identify the water surface?
+   By checking the height of the surfave
+
+** Which kind of infinity did you make?
+   Limit movement and frustum.
