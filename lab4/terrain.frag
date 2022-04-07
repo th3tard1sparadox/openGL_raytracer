@@ -2,7 +2,7 @@
 
 out vec4 outColor;
 in vec2 texCoord;
-uniform sampler2D tex;
+uniform sampler2D tex1, tex2;
 
 void main(void)
 {
