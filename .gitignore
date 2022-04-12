@@ -10,4 +10,6 @@
 !*.tga
 !*.org
 !*.pdf
+!*.h
+!*.cpp
 !makefile

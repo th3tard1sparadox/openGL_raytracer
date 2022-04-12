@@ -8,6 +8,7 @@
 #include "GL_utilities.h"
 #include "MicroGlut.h"
 #include "LittleOBJLoader.h"
+#include "ray.h"
 #define PI 3.1415f
 #define near 1.0
 #define far 10000.0
