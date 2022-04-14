@@ -229,6 +229,22 @@ char transposed = 0;
 		return result;
 	}
 
+        GLfloat length(vec3 a)
+	{
+		GLfloat result;
+
+		result = (GLfloat)std::sqrt(length_squared(a));
+		return result;
+	}
+
+        GLfloat length_squared(vec3 a)
+	{
+		GLfloat result;
+
+		result = (GLfloat)dot(a, a);
+		return result;
+	}
+
 	vec3 Normalize(vec3 a)
 	{
 		GLfloat norm;

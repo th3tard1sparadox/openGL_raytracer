@@ -49,10 +49,9 @@
 	{
 		GLfloat x, y, z;
 //		#ifdef __cplusplus
-//            vec3() {}
-//			vec3(GLfloat x2, GLfloat y2, GLfloat z2) : x(x2), y(y2), z(z2) {}
-
-////			vec3(vec4 v) : x(v.x), y(v.y), z(v.z) {}
+          vec3() {}
+          vec3(GLfloat x2, GLfloat y2, GLfloat z2) : x(x2), y(y2), z(z2) {}
+          // vec3(vec4 v) : x(v.x), y(v.y), z(v.z) {}
 //		#endif
 	} vec3, *vec3Ptr;
 	
@@ -115,6 +114,8 @@ extern "C" {
 	GLfloat DotProduct(vec3 a, vec3 b);
 	vec3 ScalarMult(vec3 a, GLfloat s);
 	GLfloat Norm(vec3 a);
+        GLfloat length(vec3 a);
+        GLfloat length_squared(vec3 a);
 	vec3 Normalize(vec3 a);
 	vec3 CalcNormalVector(vec3 a, vec3 b, vec3 c);
 	void SplitVector(vec3 v, vec3 n, vec3 *vn, vec3 *vp);
