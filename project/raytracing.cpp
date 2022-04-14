@@ -28,9 +28,9 @@ void makePixel(int x, int y, GLubyte* pixels, int width, int height, color c, in
   if (0 <= x && x < width && 0 <= y && y < height) {
     int position = (x + y * width) * 3;
     float scale = 1.0 / samples;
-    pixels[position]     = static_cast<int>(clamp(c.x * scale, 0.0, 1.0) * 255);
-    pixels[position + 1] = static_cast<int>(clamp(c.y * scale, 0.0, 1.0) * 255);
-    pixels[position + 2] = static_cast<int>(clamp(c.z * scale, 0.0, 1.0) * 255);
+    pixels[position]     = static_cast<int>(clamp(c.x * scale, 0.0, 0.999) * 255);
+    pixels[position + 1] = static_cast<int>(clamp(c.y * scale, 0.0, 0.999) * 255);
+    pixels[position + 2] = static_cast<int>(clamp(c.z * scale, 0.0, 0.999) * 255);
   } else {
     printf("OUTSIDE PICTURE!");
   }
@@ -70,8 +70,8 @@ void display()
     for (int i = 0; i < WIDTH; ++i) {
       color pixel_color(0.0, 0.0, 0.0);
       for (int s = 0; s < SAMPLES; s++) {
-        double u = (double)i + (rand() / (RAND_MAX + 1.0)) / (WIDTH-1);
-        double v = (double)j + (rand() / (RAND_MAX + 1.0)) / (HEIGHT-1);
+        double u = (i + (rand() / (RAND_MAX + 1.0))) / (WIDTH-1);
+        double v = (j + (rand() / (RAND_MAX + 1.0))) / (HEIGHT-1);
         ray r = cam.get_ray(u, v);
         pixel_color += ray_color(r, world);
       }
