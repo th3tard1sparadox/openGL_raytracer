@@ -14,9 +14,9 @@
 #include "camera.h"
 
 const GLfloat ASPECT_RATIO = 16.0 / 9.0;
-const GLint WIDTH = 800;
+const GLint WIDTH = 400;
 const GLint HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
-const int SAMPLES = 10;
+const int SAMPLES = 100;
 
 GLubyte* PixelBuffer = new GLubyte[WIDTH * HEIGHT * 3];
 hittable_list* world = new hittable_list;
@@ -70,8 +70,10 @@ void display()
     for (int i = 0; i < WIDTH; ++i) {
       color pixel_color(0.0, 0.0, 0.0);
       for (int s = 0; s < SAMPLES; s++) {
+
         double u = (i + (rand() / (RAND_MAX + 1.0))) / (WIDTH-1);
         double v = (j + (rand() / (RAND_MAX + 1.0))) / (HEIGHT-1);
+
         ray r = cam.get_ray(u, v);
         pixel_color += ray_color(r, world);
       }
