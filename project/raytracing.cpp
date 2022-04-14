@@ -48,11 +48,11 @@ color ray_color(const ray& r, const hittable* world) {
 void init(){
   glClearColor(0.5,0.2,0.5,0);
 
-  world->add(make_shared<sphere>(point3(0,0,-2), 0.5));
-  world->add(make_shared<sphere>(point3(1,0,-2), 0.5));
+  world->add(make_shared<sphere>(point3(-1.5,0,-2), 0.5));
+  world->add(make_shared<sphere>(point3(0,1,-2), 0.5));
   world->add(make_shared<sphere>(point3(0,-100.5,-1), 100));
 
-  // Camera (TODO Move to INIT)
+  // Camera
   auto viewport_height = 2.0;
   auto viewport_width = ASPECT_RATIO * viewport_height;
   auto focal_length = 1.0;
@@ -67,9 +67,9 @@ void init(){
 
 void display()
 {
-  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 2000.0;
 
-  world->move(vec3(sin(t), 0 , 0), 0);
+  world->move(vec3(sin(t)/10, 0 , 0), 0);
 
   // Scan
   for (int j = HEIGHT-1; j >= 0; --j) {
