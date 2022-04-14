@@ -20,9 +20,11 @@ class hittable_list : public hittable {
 
         virtual bool hit(
             const ray& r, double t_min, double t_max, hit_record& rec) const override;
+        virtual void move(vec3 dir, int index = 0) override;
 
     public:
         std::vector<shared_ptr<hittable>> objects;
+
 };
 
 bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
@@ -39,6 +41,10 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
     }
 
     return hit_anything;
+}
+
+void  hittable_list::move(vec3 dir, int index) {
+  objects[index]->move(dir);
 }
 
 #endif

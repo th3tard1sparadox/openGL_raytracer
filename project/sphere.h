@@ -10,6 +10,7 @@ class sphere : public hittable {
 
         virtual bool hit(
             const ray& r, double t_min, double t_max, hit_record& rec) const override;
+        virtual void move(vec3 dir, int index = 0)  override;
 
     public:
         point3 center;
@@ -40,6 +41,10 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
   rec.set_face_normal(r, outward_normal);
 
   return true;
+}
+
+void sphere::move(vec3 dir, int index) {
+  center += dir;
 }
 
 #endif
