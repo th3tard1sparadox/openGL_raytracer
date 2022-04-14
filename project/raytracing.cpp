@@ -14,9 +14,9 @@
 #include "camera.h"
 
 const GLfloat ASPECT_RATIO = 16.0 / 9.0;
-const GLint WIDTH = 400;
+const GLint WIDTH = 800;
 const GLint HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
-const int SAMPLES = 100;
+const int SAMPLES = 10;
 
 GLubyte* PixelBuffer = new GLubyte[WIDTH * HEIGHT * 3];
 hittable_list* world = new hittable_list;
@@ -61,7 +61,7 @@ void init(){
 
 void display()
 {
-  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 2000.0;
+  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 
   world->move(vec3(sin(t)/10, 0 , 0), 0);
 
