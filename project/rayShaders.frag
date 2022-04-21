@@ -77,7 +77,8 @@ bool hit(struct Ray r, struct Sphere sphere, double max_t, double min_t, struct 
 
     hit_r.t = root;
     hit_r.point = at(r, root);
-    hit_r.normal = (hit_r.point - sphere.position) / sphere.radius;
+    vec3 outward_normal = (hit_r.point - sphere.position) / sphere.radius;
+    hit_r.set_face_normal(r, outward_normal);
 
     return true;
 }
