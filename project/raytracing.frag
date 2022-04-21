@@ -1,14 +1,13 @@
 #version 150
 out vec4 out_Color;
 in float shading;
-in ray in_ray;
 
 uniform hittable* world;
 uniform vec3 inColor;
 void main(void)
 {
-    ray r = in_r;
-    color col = color(0, 0, 0);
+    ray r = in_r; // calculate ray
+    vec3 col = vec3(0, 0, 0);
     int hit_count = 0;
 
 
@@ -22,7 +21,7 @@ void main(void)
         } else {
             vec3 unit_direction = normalize(r.direction());
             vec3 t = 0.5*(unit_direction.y + 1.0);
-            col = (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
+            col = (1.0-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
             break;
         }
     }

@@ -32,6 +32,8 @@ unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLfloat resolution[] = {400, 400};
 GLuint program;
+vec4 sphere1;
+vec3 light1;
 
 void init(void){
 
@@ -82,10 +84,14 @@ void display(void){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 5000.0;
 
+
   glUniformMatrix2fv(glGetUniformLocation(program, "resolution"), 1, GL_TRUE, resolution);
 
   glBindVertexArray(vertexArrayObjID);	// Select VAO
   glDrawArrays(GL_TRIANGLES, 0, 3*2);	// draw object
+
+  glUniform4f(glGetUniformLocation(program, "sphere1"), sphere1);
+  glUniform4f(glGetUniformLocation(program, "light1"), light1);
 
   printError("display");
 
