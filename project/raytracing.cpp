@@ -14,9 +14,10 @@
 #include "camera.h"
 
 const GLfloat ASPECT_RATIO = 16.0 / 9.0;
-const GLint WIDTH = 800;
+const GLint WIDTH = 400;
 const GLint HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
 const int SAMPLES = 10;
+const int MAX_DEPTH = 50;
 
 GLubyte* PixelBuffer = new GLubyte[WIDTH * HEIGHT * 3];
 hittable_list* world = new hittable_list;
@@ -28,19 +29,27 @@ void makePixel(int x, int y, GLubyte* pixels, int width, int height, color c, in
   if (0 <= x && x < width && 0 <= y && y < height) {
     int position = (x + y * width) * 3;
     float scale = 1.0 / samples;
-    pixels[position]     = static_cast<int>(clamp(c.x * scale, 0.0, 0.999) * 255);
-    pixels[position + 1] = static_cast<int>(clamp(c.y * scale, 0.0, 0.999) * 255);
-    pixels[position + 2] = static_cast<int>(clamp(c.z * scale, 0.0, 0.999) * 255);
+    float r = sqrt(scale * c.x);
+    float g = sqrt(scale * c.y);
+    float b = sqrt(scale * c.z);
+    pixels[position] = static_cast<int>(clamp(r, 0.0, 0.999) * 255);
+    pixels[position + 1] = static_cast<int>(clamp(g, 0.0, 0.999) * 255);
+    pixels[position + 2] = static_cast<int>(clamp(b, 0.0, 0.999) * 255);
   } else {
     printf("OUTSIDE PICTURE!");
   }
 }
 
 
-color ray_color(const ray& r, const hittable* world) {
+color ray_color(const ray& r, const hittable* world, int depth) {
     hit_record rec;
-    if (world->hit(r, 0, infinity, rec)) {
-        return 0.5 * (rec.normal + color(1,1,1));
+
+    if(depth <= 0)
+        return color(0,0,0);
+
+    if (world->hit(r, 0.001, infinity, rec)) {
+        point3 target = rec.p + rec.normal + normalize(random_in_unit_sphere());
+        return 0.5 * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
     }
     vec3 unit_direction = normalize(r.direction());
     auto t = 0.5*(unit_direction.y + 1.0);
@@ -75,7 +84,7 @@ void display()
         double v = (j + (rand() / (RAND_MAX + 1.0))) / (HEIGHT-1);
 
         ray r = cam.get_ray(u, v);
-        pixel_color += ray_color(r, world);
+        pixel_color += ray_color(r, world, MAX_DEPTH);
       }
       makePixel(i, j, PixelBuffer, WIDTH, HEIGHT, pixel_color, SAMPLES);
     }

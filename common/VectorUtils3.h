@@ -54,7 +54,7 @@
           // vec3(vec4 v) : x(v.x), y(v.y), z(v.z) {}
 //		#endif
 	} vec3, *vec3Ptr;
-	
+
 	// vec4 is not as useful. Can be a color with alpha, or a quaternion, but IMHO you
 	// rarely need homogenous coordinate vectors on the CPU.
 	typedef struct vec4
@@ -65,7 +65,7 @@
 //			vec4(GLfloat x2, GLfloat y2, GLfloat z2, GLfloat w2) : x(x2), y(y2), z(z2), w(w2) {}
 //			vec4(GLfloat xyz, GLfloat w2) : x(xyz), y(xyz), z(xyz), w(w2) {}
 //			vec4(vec3 v, GLfloat w2) : x(v.x), y(v.y), z(v.z), w(w2) {}
-//			
+//
 //			vec4(vec3 v) : x(v.x), y(v.y), z(v.z), w(1) {}
 //		#endif
 	} vec4, *vec4Ptr;
@@ -79,7 +79,7 @@
 //			vec2(GLfloat x2, GLfloat y2) : x(x2), y(y2) {}
 //		#endif
 	} vec2, *vec2Ptr;
-	
+
 
 	typedef struct mat4
 	{
@@ -104,7 +104,7 @@ extern "C" {
 	mat3 SetMat3(GLfloat p0, GLfloat p1, GLfloat p2, GLfloat p3, GLfloat p4, GLfloat p5, GLfloat p6, GLfloat p7, GLfloat p8);
 	mat4 SetMat4(GLfloat p0, GLfloat p1, GLfloat p2, GLfloat p3,
 				GLfloat p4, GLfloat p5, GLfloat p6, GLfloat p7,
-				GLfloat p8, GLfloat p9, GLfloat p10, GLfloat p11, 
+				GLfloat p8, GLfloat p9, GLfloat p10, GLfloat p11,
 				GLfloat p12, GLfloat p13, GLfloat p14, GLfloat p15
 				);
 // Basic vector operations on vec3's. (vec4 not included since I never need them.)
@@ -119,6 +119,7 @@ extern "C" {
 	vec3 Normalize(vec3 a);
 	vec3 CalcNormalVector(vec3 a, vec3 b, vec3 c);
 	void SplitVector(vec3 v, vec3 n, vec3 *vn, vec3 *vp);
+    vec3 random_in_unit_sphere();
 
 // Matrix operations primarily on 4x4 matrixes!
 // Row-wise by default but can be configured to column-wise (see SetTransposed)
@@ -155,7 +156,7 @@ extern "C" {
 
 // GLU replacement functions
 	mat4 lookAtv(vec3 p, vec3 l, vec3 v);
-	mat4 lookAt(GLfloat px, GLfloat py, GLfloat pz, 
+	mat4 lookAt(GLfloat px, GLfloat py, GLfloat pz,
 			GLfloat lx, GLfloat ly, GLfloat lz,
 			GLfloat vx, GLfloat vy, GLfloat vz);
 	mat4 perspective(float fovyInDegrees, float aspectRatio,
