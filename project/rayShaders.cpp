@@ -7,6 +7,8 @@
 // uses framework Cocoa
 
 GLuint program;
+vec4 sphere1;
+vec3 light1;
 
 void init(void){
   glClearColor(0.5,0.2,0.5,0);
@@ -22,6 +24,8 @@ void display(void){
   glClear(GL_COLOR_BUFFER_BIT);
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 5000.0;
 
+  glUniform4f(glGetUniformLocation(program, "sphere1"), sphere1);
+  glUniform4f(glGetUniformLocation(program, "light1"), light1);
   printError("display");
 
   glutSwapBuffers();
