@@ -32,8 +32,8 @@ unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLfloat resolution[] = {400, 400};
 GLuint program;
-vec4 sphere1;
-vec3 light1;
+GLfloat sphere1[4];
+GLfloat light1[3];
 
 void init(void){
 
@@ -90,8 +90,8 @@ void display(void){
   glBindVertexArray(vertexArrayObjID);	// Select VAO
   glDrawArrays(GL_TRIANGLES, 0, 3*2);	// draw object
 
-  glUniform4f(glGetUniformLocation(program, "sphere1"), sphere1);
-  glUniform4f(glGetUniformLocation(program, "light1"), light1);
+  glUniformMatrix4fv(glGetUniformLocation(program, "sphere1"), 1, GL_TRUE, sphere1);
+  glUniformMatrix3fv(glGetUniformLocation(program, "light1"), 1, GL_TRUE, light1);
 
   printError("display");
 

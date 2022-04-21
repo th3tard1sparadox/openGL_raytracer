@@ -35,17 +35,18 @@ struct HitRecord
     vec3 normal;
     bool front_face;
 
-    inline void set_face_normal(struct Ray t, vec3 & outward_normal) {
-        front_face = dot(r.direction, outward_normal) < 0;
-        normal = front_face ? outward_normal : -outward_normal;
-    }
 };
 
-struct Ray get_ray(double x, double y, struct Cam)
+void set_face_normal(Ray t, vec3 &outward_normal, HitRecord &h) {
+        h.front_face = dot(r.direction, outward_normal) < 0;
+        h.normal = front_face ? outward_normal : -outward_normal;
+}
+
+Ray get_ray(double x, double y, Cam c)
 {
     struct Ray r;
-    r.origin = Cam.origin;
-    r.direction = Cam.lower_left + Cam.horizontal * x + Cam.vertical * y - Cam.origin;
+    r.origin = c.origin;
+    r.direction = c.lower_left + c.horizontal * x + c.vertical * y - c.origin;
     return r;
 }
 
@@ -80,7 +81,7 @@ bool hit(struct Ray r, struct Sphere sphere, double max_t, double min_t, struct 
     hit_r.t = root;
     hit_r.point = at(r, root);
     vec3 outward_normal = (hit_r.point - sphere.position) / sphere.radius;
-    hit_r.set_face_normal(r, outward_normal);
+    set_face_normal(r, outward_normal, hit_r);
 
     return true;
 }
