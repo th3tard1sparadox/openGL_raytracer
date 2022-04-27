@@ -48,11 +48,11 @@
 	typedef struct vec3
 	{
 		GLfloat x, y, z;
-//		#ifdef __cplusplus
+		#ifdef __cplusplus
           vec3() {}
           vec3(GLfloat x2, GLfloat y2, GLfloat z2) : x(x2), y(y2), z(z2) {}
-          // vec3(vec4 v) : x(v.x), y(v.y), z(v.z) {}
-//		#endif
+          vec3(vec4 v) : x(v.x), y(v.y), z(v.z) {}
+		#endif
 	} vec3, *vec3Ptr;
 
 	// vec4 is not as useful. Can be a color with alpha, or a quaternion, but IMHO you
