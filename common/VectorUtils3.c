@@ -74,6 +74,7 @@
 
 
 #include "VectorUtils3.h"
+#include <stdlib.h>
 
 // VS doesn't define NAN properly
 #ifdef _WIN32
@@ -233,7 +234,7 @@ char transposed = 0;
 	{
 		GLfloat result;
 
-		result = (GLfloat)std::sqrt(length_squared(a));
+		result = (GLfloat)sqrt(length_squared(a));
 		return result;
 	}
 
@@ -268,7 +269,7 @@ char transposed = 0;
 	}
 
     vec3 random_in_unit_sphere() {
-        while(true) {
+        while(1) {
             vec3 v;
             v.x = -1.0 + 2 * (rand() / (RAND_MAX + 1.0));
             v.y = -1.0 + 2 * (rand() / (RAND_MAX + 1.0));
