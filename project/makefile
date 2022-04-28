@@ -7,7 +7,10 @@ raytracing: raytracing.cpp $(commondir)GL_utilities.c $(commondir)VectorUtils3.c
 	g++ -Wall -O3 -o raytracing -I$(commondir) -I../common/Linux -DGL_GLEXT_PROTOTYPES raytracing.cpp $(commondir)GL_utilities.c $(commondir)LittleOBJLoader.c $(commondir)VectorUtils3.c $(commondir)LoadTGA.c $(commondir)Linux/MicroGlut.c -lXt -lX11 -lGL -lm
 
 rayShaders: rayShaders.cpp $(commondir)GL_utilities.c $(commondir)VectorUtils3.c $(commondir)LittleOBJLoader.c $(commondir)LoadTGA.c $(commondir)Linux/MicroGlut.c
-	g++ -Wall -O3 -o rayShaders -I$(commondir) -I../common/Linux -DGL_GLEXT_PROTOTYPES rayShaders.cpp $(commondir)GL_utilities.c $(commondir)LittleOBJLoader.c $(commondir)VectorUtils3.c $(commondir)LoadTGA.c $(commondir)Linux/MicroGlut.c -lXt -lX11 -lGL -lm
+	gcc -Wall -O3 -o rayShaders -I$(commondir) -I../common/Linux -DGL_GLEXT_PROTOTYPES rayShaders.cpp $(commondir)GL_utilities.c $(commondir)LittleOBJLoader.c $(commondir)VectorUtils3.c $(commondir)LoadTGA.c $(commondir)Linux/MicroGlut.c -lXt -lX11 -lGL -lm
+
+cleanrayShader:
+	rm rayShaders
 
 clean :
 	rm raytracing
