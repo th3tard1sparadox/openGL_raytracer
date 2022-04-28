@@ -8,6 +8,7 @@ out vec4 out_Color;
 
 uniform vec4 sphere1;
 uniform vec3 light1;
+uniform vec3 light2;
 
 struct Camera
 {
@@ -58,6 +59,10 @@ Ray get_shadow_ray(vec3 src, vec3 dest){
 float length_squared(in vec3 a)
 {
   return a.x * a.x + a.y * a.y + a.z * a.z;
+}
+
+float get_ray_length(in Ray r){
+  return sqrt(r.direction.x * r.direction.x + r.direction.y * r.direction.y + r.direction.z * r.direction.z);
 }
 
 vec3 at(in Ray r, in float t)
@@ -117,14 +122,19 @@ void main(void)
 
   HitRecord hit_r;
   vec3 color = vec3(0.0, 0.0, 0.0);
-  Sphere s = Sphere(vec3(0.0, 0.0, 1.0), 0.5);
-  vec3 light = vec3(0.0, 1.5, 0.0);
+  Sphere s = Sphere(vec3(sphere1.r, sphere1.g, sphere1.b), sphere1.a);
+  vec3 light = light1;
 
   if (hit(r, s, 0.001, INF, hit_r) ){
     if(hit_r.front_face){
-      Ray shadow_ray = get_shadow_ray(hit_r.point, light);
-      float angle = dot(hit_r.normal, shadow_ray.direction);
-      color += angle*vec3(1.0, 1.0, 1.0);
+      Ray shadow_ray1 = get_shadow_ray(hit_r.point, light);
+      float angle = dot(hit_r.normal, shadow_ray1.direction);
+      float l1 = get_ray_length(shadow_ray1);
+      // color += angle*vec3(1.0, 0.5, 1.0)*(1/l1);
+      Ray shadow_ray2 = get_shadow_ray(hit_r.point, light2);
+      float angle2 = dot(hit_r.normal, shadow_ray2.direction);
+      float l2 = get_ray_length(shadow_ray2);
+      color += angle2*vec3(0.0, 0.0, 1.0)*(1/(l2*l2));
     }
 
   }

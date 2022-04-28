@@ -32,8 +32,9 @@ unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLfloat resolution[] = {400, 400};
 GLuint program;
-GLfloat sphere1[4] = {0.1, 0.5, 0.9, 0.5};
-GLfloat light1[3] = {0.1, 0.5, 0.9};
+GLfloat sphere1[4] = {0.0, 0.0, 1.0, 0.5};
+GLfloat light1[3] = {0.0, 3, 0.0};
+GLfloat light2[3] = {0.0, -0.5, 1.0};
 
 void init(void){
 
@@ -74,7 +75,7 @@ void init(void){
   glEnableVertexAttribArray(glGetAttribLocation(program, "in_texCoord"));
 
   printError("texCoord input");
-  // glutRepeatingTimer(16);
+  glutRepeatingTimer(16);
 }
 
 void display(void){
@@ -82,7 +83,7 @@ void display(void){
   printError("pre-display");
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 5000.0;
+  GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 500.0;
 
 
   glUniformMatrix2fv(glGetUniformLocation(program, "resolution"), 1, GL_TRUE, resolution);
@@ -92,8 +93,15 @@ void display(void){
 
   printError("mid-display");
 
-  glUniform4fv(glGetUniformLocation(program, "sphere1"), 1, GL_TRUE, sphere1);
-  glUniform3fv(glGetUniformLocation(program, "light1"), 1, GL_TRUE, light1);
+  // sphere1[0] = sin(t);
+  light1[2] = cos(t);
+  light1[0] = sin(t);
+
+  light2[1] = sin(t)*10;
+
+  glUniform4fv(glGetUniformLocation(program, "sphere1"), 1, sphere1);
+  glUniform3fv(glGetUniformLocation(program, "light1"), 1, light1);
+  glUniform3fv(glGetUniformLocation(program, "light2"), 1, light2);
 
   printError("display");
 
