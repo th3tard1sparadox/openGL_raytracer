@@ -42,7 +42,7 @@ struct Triangle
     vec3 p1;
     vec3 p2;
     vec3 p3;
-}
+};
 
 struct Plane
 {
@@ -59,7 +59,7 @@ Ray get_ray(in float x, in float y, in Camera c)
 {
   Ray r;
   r.origin = c.origin;
-  r.direction = vec3(x, y, c.FL);
+  r.direction = normalize(vec3(x, y, c.FL));
   return r;
 }
 
@@ -111,7 +111,7 @@ bool hit(in Ray r, in Sphere sphere, in float max_t, in float min_t, inout HitRe
 
 vec3 cal_normal(in Triangle t)
 {
-    vec3 dir = cross((t.p2 - t.p1), (t.p3, t.p1));
+    vec3 dir = cross((t.p2 - t.p1), (t.p3 - t.p1));
     return normalize(dir);
 }
 
@@ -132,13 +132,14 @@ bool within_triangle(in vec3 hit_point, in Triangle triangle)
     vec3 norm1 = cal_normal(t1);
     vec3 norm2 = cal_normal(t2);
     vec3 norm3 = cal_normal(t3);
-    return (norm1 == norm2 && norm2 = norm3);
+    bool same = norm1 == norm2 && norm2 == norm3;
+    return same;
 }
 
-bool hit_plane(in Ray r, in Plane plane, inout vec3 point) {
-    float denom = dot(plane.normal, ray.direction);
-    if (denom > 0.0000001) {
-        float t = dot((plane.point - ray.origin), plane.normal) / denom;
+bool hit_plane(in Ray r, in Plane plane, inout vec3 point, inout float t) {
+    float denom = dot(plane.normal, r.direction);
+    if (abs(denom) > 0.0001) {
+        t = dot((plane.point - r.origin), plane.normal) / denom;
         if (t >= 0) {
             point = at(r, t);
             return true;
@@ -151,18 +152,20 @@ Plane calculate_plane(in Triangle t)
 {
     Plane p;
     p.point = t.p1;
-    p.normal = cal_normal(t);
+    p.normal = -cal_normal(t);
     return p;
 }
 
 bool hit_triangle(in Ray r, in Triangle triangle, inout HitRecord hit_r) {
     Plane plane = calculate_plane(triangle);
     vec3 hit_point = vec3(0,0,0);
-    if (hit_plane(r, plane, hit_point)) {
+    float t = 0.0;
+    if (hit_plane(r, plane, hit_point, t)) {
+        return true;
         if (within_triangle(hit_point, triangle)) {
             hit_r.t = t;
             hit_r.point = hit_point;
-            if (length_squared(ray.direction + plane.normal) > length_squared(ray.direction)) {
+            if (length_squared(r.direction + plane.normal) > length_squared(r.direction)) {
                 hit_r.front_face = false;
                 hit_r.normal = -plane.normal;
             } else {
@@ -214,6 +217,31 @@ void main(void)
         }
       }
     }
+  }
+
+  vec3 p1 = vec3(0.0, 0.5, 2.0);
+  vec3 p2 = vec3(-0.5, -0.5, 2.0);
+  vec3 p3 = vec3(0.5, -0.5, 2.0);
+  Triangle t;
+  t.p1 = p1;
+  t.p2 = p2;
+  t.p3 = p3;
+
+  if(hit_triangle(r, t, hit_r)) {
+    color = vec3(1.0, 0.0, 0.0);
+      if(hit_r.front_face){
+        Ray shadow_ray;
+        vec3 light_col, light;
+        for(int j = 0; j < 2; j++){
+          light = lights[j*2];
+          light_col = lights[(j*2) + 1];
+
+          shadow_ray = get_shadow_ray(hit_r.point, light);
+          float angle = dot(hit_r.normal, shadow_ray.direction);
+          float len = get_ray_length(shadow_ray);
+          color += angle * light_col * (1/(len));
+        }
+      }
   }
 
 
