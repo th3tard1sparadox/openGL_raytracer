@@ -1,14 +1,12 @@
 #version 150
 
-in vec2 resolution;
 in vec4 gl_FragCoord;
 in vec2 texCoord;
 
 out vec4 out_Color;
 
-uniform vec4 sphere1;
-uniform vec3 light1;
-uniform vec3 light2;
+uniform vec4 spheres[3];
+uniform vec3 lights[4];
 
 struct Camera
 {
@@ -152,6 +150,7 @@ bool hit_square(in Ray r, in Plane plane, inout HitRecord hit_r) {
 
 void main(void)
 {
+
   const float INF = 60000.0;
   int max_depth = 3;
 
@@ -168,28 +167,28 @@ void main(void)
   Camera cam = Camera(ori, hor, vert, LLC, focal_length);
   Ray r = get_ray(texCoord.x, texCoord.y, cam);
 
-  // vec3 unit_direction = normalize(r.direction);
-  // float t = 0.5*(unit_direction.y + 1.0);
-  // vec3 color = (1.0-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
-
   HitRecord hit_r;
   vec3 color = vec3(0.0, 0.0, 0.0);
-  Sphere s = Sphere(vec3(sphere1.r, sphere1.g, sphere1.b), sphere1.a);
-  vec3 light = light1;
+  for(int i = 0; i < 3; i++){
+    Sphere s = Sphere(vec3(spheres[i].r, spheres[i].g, spheres[i].b), spheres[i].a);
 
-  if (hit(r, s, 0.001, INF, hit_r) ){
-    if(hit_r.front_face){
-      Ray shadow_ray1 = get_shadow_ray(hit_r.point, light);
-      float angle = dot(hit_r.normal, shadow_ray1.direction);
-      float l1 = get_ray_length(shadow_ray1);
-      // color += angle*vec3(1.0, 0.5, 1.0)*(1/l1);
-      Ray shadow_ray2 = get_shadow_ray(hit_r.point, light2);
-      float angle2 = dot(hit_r.normal, shadow_ray2.direction);
-      float l2 = get_ray_length(shadow_ray2);
-      color += angle2*vec3(0.0, 0.0, 1.0)*(1/(l2*l2));
+    if (hit(r, s, 0.001, INF, hit_r) ){
+      if(hit_r.front_face){
+        Ray shadow_ray;
+        vec3 light_col, light;
+        for(int j = 0; j < 2; j++){
+          light = lights[j*2];
+          light_col = lights[(j*2) + 1];
+
+          shadow_ray = get_shadow_ray(hit_r.point, light);
+          float angle = dot(hit_r.normal, shadow_ray.direction);
+          float len = get_ray_length(shadow_ray);
+          color += angle * light_col * (1/(len));
+        }
+      }
     }
-
   }
+
 
   out_Color = vec4(color, 1.0);
 }
