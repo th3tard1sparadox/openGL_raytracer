@@ -30,11 +30,18 @@ GLfloat texCoords[] = {
 // vertex array object
 unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
-GLfloat resolution[] = {400, 400};
 GLuint program;
-GLfloat sphere1[4] = {0.0, 0.0, 1.0, 0.5};
-GLfloat light1[3] = {0.0, 3, 0.0};
-GLfloat light2[3] = {0.0, -0.5, 1.0};
+GLfloat spheres[3][4] = {
+  {-0.5, 0.0, 1.0, 0.5},
+  {0.0, 100.0, 25.0, 75.0},
+  {0.5, 0.0, 1.0, 0.5},
+};
+GLfloat lights[4][3] = {
+  {0.0, 3, 0.0},
+  {0.0, 0.0, 1.0},
+  {0.0, -0.5, 1.0},
+  {1.0, 0.5, 1.0},
+};
 
 void init(void){
 
@@ -85,23 +92,19 @@ void display(void){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 500.0;
 
-
-  glUniformMatrix2fv(glGetUniformLocation(program, "resolution"), 1, GL_TRUE, resolution);
-
   glBindVertexArray(vertexArrayObjID);	// Select VAO
   glDrawArrays(GL_TRIANGLES, 0, 3*2);	// draw object
 
   printError("mid-display");
 
   // sphere1[0] = sin(t);
-  light1[2] = cos(t);
-  light1[0] = sin(t);
+  lights[0][2] = cos(t);
+  lights[0][0] = sin(t);
 
-  light2[1] = sin(t)*10;
+  lights[2][1] = sin(t)*10;
 
-  glUniform4fv(glGetUniformLocation(program, "sphere1"), 1, sphere1);
-  glUniform3fv(glGetUniformLocation(program, "light1"), 1, light1);
-  glUniform3fv(glGetUniformLocation(program, "light2"), 1, light2);
+  glUniform4fv(glGetUniformLocation(program, "spheres"), 3, (GLfloat*) spheres[0]);
+  glUniform3fv(glGetUniformLocation(program, "lights"), 4, (GLfloat*) lights[0]);
 
   printError("display");
 
