@@ -41,8 +41,8 @@ struct Plane
 {
   vec3 p1;
   vec3 p2;
-  vec3 mid;
-  vec3 norm;
+  vec3 point;
+  vec3 normal;
 };
 
 void set_face_normal(inout Ray r, inout vec3 outward_normal, inout HitRecord h) {
@@ -104,18 +104,6 @@ bool hit(in Ray r, in Sphere sphere, in float max_t, in float min_t, inout HitRe
   return true;
 }
 
-Plane makePlane(in vec3 p1, in vec3 p2) {
-    Plane p;
-    p.p1 = p1;
-    p.p2 = p2;
-    vec3 pm = vec3(0,0,0);
-    pm.x = (3*p1.x - p2.x) / 2;
-    pm.y = (3*p1.y - p2.y) / 2;
-    pm.z = (3*p1.z - p2.z) / 2;
-    p.mid = pm;
-    p.norm = normalize(pm) + pm;
-}
-
 bool within_square(in vec3 hit_point, in Plane plane) {
     return ((hit_point.x < plane.p1.x && hit_point.x > plane.p2.x &&
              hit_point.y < plane.p2.y && hit_point.y > plane.p1.y) ||
@@ -128,18 +116,18 @@ bool within_square(in vec3 hit_point, in Plane plane) {
 }
 
 bool hit_square(in Ray r, in Plane plane, inout HitRecord hit_r) {
-    float denom = dot(plane.norm, ray.direction);
+    float denom = dot(plane.normal, ray.direction);
     if (denom > 0.0000001) {
-        float t = dot((plane.mid - ray.origin), plane.norm) / denom;
+        float t = dot((plane.point - ray.origin), plane.normal) / denom;
         if (t >= 0) {
             vec3 hit_point = at(r, t);
             if (within_square(hit_point, plane)) {
                 hit_r.t = t;
                 hit_r.point = hit_point;
-                if (length_squared(ray.direction + plane.norm) > length_squared(ray.direction)) {
-                    set_face_normal(r, -plane.norm, hit_r);
+                if (length_squared(ray.direction + plane.normal) > length_squared(ray.direction)) {
+                    set_face_normal(r, -plane.normal, hit_r);
                 } else {
-                    set_face_normal(r, plane.norm, hit_r);
+                    set_face_normal(r, plane.normal, hit_r);
                 }
                 return true;
             }
