@@ -16,8 +16,6 @@
 const GLfloat ASPECT_RATIO = 16.0 / 9.0;
 const GLint WIDTH = 400;
 const GLint HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
-const int SAMPLES = 10;
-const int MAX_DEPTH = 50;
 
 hittable_list* world = new hittable_list;
 vec3 origin, horizontal, vertical, lower_left_corner;
