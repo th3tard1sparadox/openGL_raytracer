@@ -37,10 +37,15 @@ struct HitRecord
   bool front_face;
 };
 
+struct Triangle
+{
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+}
+
 struct Plane
 {
-  vec3 p1;
-  vec3 p2;
   vec3 point;
   vec3 normal;
 };
@@ -104,15 +109,30 @@ bool hit(in Ray r, in Sphere sphere, in float max_t, in float min_t, inout HitRe
   return true;
 }
 
-bool within_square(in vec3 hit_point, in Plane plane) {
-    return ((hit_point.x < plane.p1.x && hit_point.x > plane.p2.x &&
-             hit_point.y < plane.p2.y && hit_point.y > plane.p1.y) ||
-            (hit_point.x > plane.p1.x && hit_point.x < plane.p2.x &&
-             hit_point.y > plane.p2.y && hit_point.y < plane.p1.y) ||
-            (hit_point.x > plane.p1.x && hit_point.x < plane.p2.x &&
-             hit_point.y < plane.p2.y && hit_point.y > plane.p1.y) ||
-            (hit_point.x < plane.p1.x && hit_point.x < plane.p2.x &&
-             hit_point.y < plane.p2.y && hit_point.y > plane.p1.y));
+vec3 cal_normal(in Triangle t)
+{
+    vec3 dir = cross((t.p2 - t.p1), (t.p3, t.p1));
+    return normalize(dir);
+}
+
+bool within_triangle(in vec3 hit_point, in Triangle triangle)
+{
+    Triangle t1;
+    t1.p1 = triangle.p1;
+    t1.p2 = triangle.p2;
+    t1.p3 = hit_point;
+    Triangle t2;
+    t2.p1 = triangle.p2;
+    t2.p2 = triangle.p3;
+    t2.p3 = hit_point;
+    Triangle t3;
+    t3.p1 = triangle.p1;
+    t3.p2 = hit_point;
+    t3.p3 = triangle.p3;
+    vec3 norm1 = cal_normal(t1);
+    vec3 norm2 = cal_normal(t2);
+    vec3 norm3 = cal_normal(t3);
+    return (norm1 == norm2 && norm2 = norm3);
 }
 
 bool hit_plane(in Ray r, in Plane plane, inout vec3 point) {
@@ -127,10 +147,19 @@ bool hit_plane(in Ray r, in Plane plane, inout vec3 point) {
     return false;
 }
 
-bool hit_square(in Ray r, in Plane plane, inout HitRecord hit_r) {
+Plane calculate_plane(in Triangle t)
+{
+    Plane p;
+    p.point = t.p1;
+    p.normal = cal_normal(t);
+    return p;
+}
+
+bool hit_triangle(in Ray r, in Triangle triangle, inout HitRecord hit_r) {
+    Plane plane = calculate_plane(triangle);
     vec3 hit_point = vec3(0,0,0);
     if (hit_plane(r, plane, hit_point)) {
-        if (within_square(hit_point, plane)) {
+        if (within_triangle(hit_point, triangle)) {
             hit_r.t = t;
             hit_r.point = hit_point;
             if (length_squared(ray.direction + plane.normal) > length_squared(ray.direction)) {
