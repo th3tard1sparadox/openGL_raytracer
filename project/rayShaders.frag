@@ -115,22 +115,32 @@ bool within_square(in vec3 hit_point, in Plane plane) {
              hit_point.y < plane.p2.y && hit_point.y > plane.p1.y));
 }
 
-bool hit_square(in Ray r, in Plane plane, inout HitRecord hit_r) {
+bool hit_plane(in Ray r, in Plane plane, inout vec3 point) {
     float denom = dot(plane.normal, ray.direction);
     if (denom > 0.0000001) {
         float t = dot((plane.point - ray.origin), plane.normal) / denom;
         if (t >= 0) {
-            vec3 hit_point = at(r, t);
-            if (within_square(hit_point, plane)) {
-                hit_r.t = t;
-                hit_r.point = hit_point;
-                if (length_squared(ray.direction + plane.normal) > length_squared(ray.direction)) {
-                    set_face_normal(r, -plane.normal, hit_r);
-                } else {
-                    set_face_normal(r, plane.normal, hit_r);
-                }
-                return true;
+            point = at(r, t);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool hit_square(in Ray r, in Plane plane, inout HitRecord hit_r) {
+    vec3 hit_point = vec3(0,0,0);
+    if (hit_plane(r, plane, hit_point)) {
+        if (within_square(hit_point, plane)) {
+            hit_r.t = t;
+            hit_r.point = hit_point;
+            if (length_squared(ray.direction + plane.normal) > length_squared(ray.direction)) {
+                hit_r.front_face = false;
+                hit_r.normal = -plane.normal;
+            } else {
+                hit_r.front_face = true;
+                hit_r.normal = plane.normal;
             }
+            return true;
         }
     }
     return false;
