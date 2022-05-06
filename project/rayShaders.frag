@@ -54,16 +54,12 @@ Ray get_ray(in float x, in float y, in float FL)
 }
 
 Ray get_shadow_ray(vec3 src, vec3 dest){
-  return Ray(src, dest-src);
+  return Ray(src, normalize(dest-src));
 }
 
 float length_squared(in vec3 a)
 {
   return a.x * a.x + a.y * a.y + a.z * a.z;
-}
-
-float get_ray_length(in Ray r){
-  return sqrt(r.direction.x * r.direction.x + r.direction.y * r.direction.y + r.direction.z * r.direction.z);
 }
 
 vec3 at(in Ray r, in float t)
@@ -159,12 +155,11 @@ void main(void)
           shadow_ray = get_shadow_ray(hit_r.point, light);
           for(int k = 0; k < spheresN; k++){
             Sphere ss = Sphere(vec3(spheres[k].r, spheres[k].g, spheres[k].b), spheres[k].a);
-
-            if (!hit(shadow_ray, ss, INF, 0.001, hit_r)){
+            HitRecord h;
+            if (!hit(shadow_ray, ss, 1000000, 0.001, h)){
               float angle = dot(hit_r.normal, shadow_ray.direction);
-              float len = get_ray_length(shadow_ray);
+              float len = length(light - hit_r.point);
               color += angle * light_col * (1/(len));
-              // color = vec3(1);
             }
           }
         }

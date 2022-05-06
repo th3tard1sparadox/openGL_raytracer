@@ -31,19 +31,19 @@ GLfloat texCoords[] = {
 unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLuint program;
-GLfloat spheresN = 4;
+GLfloat spheresN = 2;
 GLfloat spheres[4][4] = {
   {0.0, 0.0, 4.0, 1.0},
   {0.0, 1.0, 3.0, 0.2},
   {0.0, -100.5, 4.0, 100.0},
   {0.0, -1000.0, 4.0, 100.0},
 };
-GLfloat lightN = 1;
+GLfloat lightN = 2;
 GLfloat lights[4][3] = {
-  {0.0, 2.0, 2.0},
-  {0.0, 1.0, 0.0},
-  {0.0, -2.0, 1.0},
-  {1.0, 0.0, 1.0},
+  {0.0, 2.0, 4.0},
+  {0.5, 0.0, 0.0},
+  {0.0, 2.0, 0.0},
+  {0.0, 0.0, 1.0},
 };
 
 void init(void){
@@ -57,7 +57,7 @@ void init(void){
 
   printError("GL inits");
 
-  program = loadShaders("rayShaders.vert", "rayShaders.frag");
+  program = loadShaders("rayShaders.vert", "test.frag");
   printError("Program");
 
   // Allocate and activate Vertex Array Object
@@ -98,6 +98,8 @@ void display(void){
 
   printError("mid-display");
 
+  spheres[1][1] = cos(t/2) * 1.5;
+  spheres[1][2] = sin(t/2) * 1.5 + 4;
   // sphere1[0] = sin(t);
   // lights[0][2] = cos(t);
   // lights[0][0] = sin(t);
