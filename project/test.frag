@@ -6,7 +6,7 @@ in vec2 texCoord;
 out vec4 out_Color;
 
 uniform vec4 spheres[4];
-uniform vec3 lights[4];
+uniform vec3 lights[6];
 
 uniform int spheresN;
 uniform int lightN;
@@ -160,7 +160,7 @@ void main(void)
                     // calculate color here
                     float angle = dot(hits[t_index].normal, shadow_ray.direction);
                     float len = length(l.position - shadow_ray.origin);
-                    color += angle * l.color * (1/(len));
+                    color += angle * l.color * (1/(len*len));
                 } else {
                     //color = vec3(0.5);
                 }

@@ -31,19 +31,21 @@ GLfloat texCoords[] = {
 unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLuint program;
-GLfloat spheresN = 2;
+GLfloat spheresN = 3;
 GLfloat spheres[4][4] = {
   {0.0, 0.0, 4.0, 1.0},
   {0.0, 1.0, 3.0, 0.2},
-  {0.0, -100.5, 4.0, 100.0},
+  {0.0, -102, 4.0, 100.0},
   {0.0, -1000.0, 4.0, 100.0},
 };
-GLfloat lightN = 2;
-GLfloat lights[4][3] = {
+GLfloat lightN = 3;
+GLfloat lights[6][3] = {
   {0.0, 2.0, 4.0},
   {0.5, 0.0, 0.0},
   {0.0, 2.0, 0.0},
   {0.0, 0.0, 1.0},
+  {0.0, 0.0, 4.0},
+  {0.0, 1.0, 0.0},
 };
 
 void init(void){
@@ -101,7 +103,7 @@ void display(void){
   spheres[1][1] = cos(t/2) * 1.5;
   spheres[1][2] = sin(t/2) * 1.5 + 4;
   // sphere1[0] = sin(t);
-  // lights[0][2] = cos(t);
+  lights[4][0] = cos(t) * 15;
   // lights[0][0] = sin(t);
 
   // lights[2][1] = sin(t)*10;
