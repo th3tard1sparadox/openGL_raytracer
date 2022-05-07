@@ -8,13 +8,13 @@
 
 GLfloat vertices[] =
 {
-  1.0f,  1.0f,  0.5f,
-  1.0f,  -1.0f,  0.5f,
-  -1.0f, -1.0f, 0.5f,
+  1.0f,  1.0f,   0.0f,
+  1.0f,  -1.0f,  0.0f,
+  -1.0f, -1.0f,  0.0f,
 
-  -1.0f,  1.0f,  0.5f,
-  1.0f,   1.0f,  0.5f,
-  -1.0f,  -1.0f, 0.5f,
+  -1.0f,  1.0f,  0.0f,
+  1.0f,   1.0f,  0.0f,
+  -1.0f,  -1.0f, 0.0f,
 };
 
 GLfloat texCoords[] = {
@@ -31,16 +31,21 @@ GLfloat texCoords[] = {
 unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLuint program;
-GLfloat spheres[3][4] = {
-  {-0.5, 0.0, 1.0, 0.5},
-  {0.0, 100.0, 25.0, 75.0},
-  {0.5, 0.0, 1.0, 0.5},
+GLfloat spheresN = 3;
+GLfloat spheres[4][4] = {
+  {0.0, 0.0, 4.0, 1.0},
+  {0.0, 1.0, 3.0, 0.2},
+  {0.0, -102, 4.0, 100.0},
+  {0.0, -1000.0, 4.0, 100.0},
 };
-GLfloat lights[4][3] = {
-  {0.0, 3, 0.0},
+GLfloat lightN = 3;
+GLfloat lights[6][3] = {
+  {0.0, 2.0, 4.0},
+  {0.5, 0.0, 0.0},
+  {0.0, 2.0, 0.0},
   {0.0, 0.0, 1.0},
-  {0.0, -0.5, 1.0},
-  {1.0, 0.5, 1.0},
+  {0.0, 0.0, 4.0},
+  {0.0, 1.0, 0.0},
 };
 
 void init(void){
@@ -52,12 +57,9 @@ void init(void){
 
   glClearColor(0.5,0.2,0.5,0);
 
-  glEnable(GL_DEPTH_TEST);
-
-
   printError("GL inits");
 
-  program = loadShaders("rayShaders.vert", "rayShaders.frag");
+  program = loadShaders("rayShaders.vert", "test.frag");
   printError("Program");
 
   // Allocate and activate Vertex Array Object
@@ -89,6 +91,7 @@ void display(void){
 
   printError("pre-display");
 
+  glClearDepth(10.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 500.0;
 
@@ -97,14 +100,18 @@ void display(void){
 
   printError("mid-display");
 
+  spheres[1][1] = cos(t/2) * 1.5;
+  spheres[1][2] = sin(t/2) * 1.5 + 4;
   // sphere1[0] = sin(t);
-  lights[0][2] = cos(t);
-  lights[0][0] = sin(t);
+  lights[4][0] = cos(t) * 15;
+  // lights[0][0] = sin(t);
 
-  lights[2][1] = sin(t)*10;
+  // lights[2][1] = sin(t)*10;
 
-  glUniform4fv(glGetUniformLocation(program, "spheres"), 3, (GLfloat*) spheres[0]);
-  glUniform3fv(glGetUniformLocation(program, "lights"), 4, (GLfloat*) lights[0]);
+  glUniform1i(glGetUniformLocation(program, "spheresN"), spheresN);
+  glUniform4fv(glGetUniformLocation(program, "spheres"), spheresN, (GLfloat*) spheres[0]);
+  glUniform1i(glGetUniformLocation(program, "lightN"), lightN);
+  glUniform3fv(glGetUniformLocation(program, "lights"), lightN*2, (GLfloat*) lights[0]);
 
   printError("display");
 
