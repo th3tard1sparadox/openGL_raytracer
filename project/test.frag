@@ -118,42 +118,35 @@ void main(void)
 
     Ray r = get_camera_ray(texCoord.x, texCoord.y, focal_length);
 
-    float t_smallest = 6000;
+    float t_smallest = max_t;
     HitRecord hits[10];
-    bool set_t = false;
-    int t_index;
+    int t_index = -1;
     vec3 color = vec3(0.0, 0.0, 0.0);
     for(int i = 0; i < spheresN; i++)
     {
-        Sphere s;
-        s.center = vec3(spheres[i].r, spheres[i].g, spheres[i].b);
-        s.radius = spheres[i].a;
+        Sphere s = Sphere(vec3(spheres[i].r, spheres[i].g, spheres[i].b), spheres[i].a);
+
         if(hit_sphere(r, s, max_t, min_t, hits[i]))
         {
             if(length(hits[i].point) < t_smallest)
             {
                 t_smallest = length(hits[i].point);
                 t_index = i;
-                set_t = true;
             }
         }
     }
 
-    if(set_t)
+    if(t_index != -1)
     {
         for(int i = 0; i < lightN; i++)
         {
-            Light l;
-            l.position = lights[i*2];
-            l.color = lights[(i*2) + 1];
+            Light l = Light(lights[i*2], lights[(i*2) + 1]);
 
             Ray shadow_ray = get_shadow_ray(hits[t_index].point, l);
 
             for(int j = 0; j < spheresN; j++)
             {
-                Sphere s;
-                s.center = vec3(spheres[j].r, spheres[j].g, spheres[j].b);
-                s.radius = spheres[j].a;
+                Sphere s = Sphere(vec3(spheres[j].r, spheres[j].g, spheres[j].b), spheres[j].a);
                 HitRecord hit_r;
                 if(!hit_sphere(shadow_ray, s, max_t, min_t, hit_r))
                 {
