@@ -148,7 +148,6 @@ bool hit_triangle(in Ray r, in Triangle t, in float max_t, in float min_t, inout
     Plane p = get_plane(t);
     if(hit_plane(r, p, max_t, min_t, h))
     {
-        return true;
         if(within_triangle(h.point, t))
         {
             return true;
