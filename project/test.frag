@@ -1,13 +1,24 @@
 #version 150
 
+// Planes
+// Triangles
+// Spheres
+// Lights
+
 in vec4 gl_FragCoord;
 in vec2 texCoord;
 
 out vec4 out_Color;
 
-uniform vec4 spheres[4];
-uniform vec3 lights[6];
+uniform mat2x3 planes[10];
+uniform mat3 triangles_[10];
+uniform vec4 spheres[10];
+uniform vec3 lights[10];
 
+uniform vec3 colors[40];
+
+uniform int planesN;
+uniform int triangles_N;
 uniform int spheresN;
 uniform int lightN;
 
@@ -224,9 +235,39 @@ void main(void)
     Ray r = get_camera_ray(texCoord.x, texCoord.y, focal_length);
 
     float t_smallest = max_t;
-    HitRecord hits[10];
+    HitRecord hits[30];
     int t_index = -1;
     vec3 color = vec3(0.0, 0.0, 0.0);
+
+    // planes
+    for(int i = 0; i < planesN; i++)
+    {
+        Plane p = Plane(planes[i][0], planes[i][1]);
+
+        if(hit_plane(r, p, max_t, min_t, hits[i]))
+        {
+            if(length(hits[i].point) < t_smallest)
+            {
+                t_smallest = length(hits[i].point);
+                t_index = i;
+            }
+        }
+    }
+
+    // triangles
+    for(int i = 0; i < triangles_N; i++)
+    {
+        Triangle t = Triangle(triangles_[i][0], triangles_[i][1], triangles_[i][2]);
+
+        if(hit_triangle(r, t, max_t, min_t, hits[i]))
+        {
+            if(length(hits[i].point) < t_smallest)
+            {
+                t_smallest = length(hits[i].point);
+                t_index = i;
+            }
+        }
+    }
 
     // spheres
     for(int i = 0; i < spheresN; i++)
@@ -243,27 +284,42 @@ void main(void)
         }
     }
 
-    // triangles
-    Triangle tri = Triangle(vec3(0.5, 0.5, 3.0), vec3(-0.5, 0.5, 3.0), vec3(0.0, 0.0, 2.0));
-    if(hit_triangle(r, tri, max_t, min_t, hits[spheresN]))
-    {
-        if(length(hits[spheresN].point) < t_smallest)
-        {
-            t_smallest = length(hits[spheresN].point);
-            t_index = spheresN;
-        }
-    }
-
-
+    // lights
     if(t_index != -1)
     {
         for(int i = 0; i < lightN; i++)
         {
-            Light l = Light(lights[i*2], lights[(i*2) + 1]);
+            Light l = Light(lights[i], colors[planesN + triangles_N + spheresN - 1 + i]);
 
             Ray shadow_ray = get_shadow_ray(hits[t_index].point, l);
 
+            int next_j = 0;
             HitRecord hit_r;
+            // planes
+            for(int j = 0; j < planesN; j++)
+            {
+                Plane p = Plane(planes[j][0], planes[j][1]);
+                if(!hit_plane(shadow_ray, p, max_t, min_t, hit_r))
+                {
+                    float angle = dot(hits[t_index].normal, shadow_ray.direction);
+                    float len = length(l.position - shadow_ray.origin);
+                    color += angle * l.color * (1/(len*len));
+                }
+                next_j++;
+            }
+            // triangles
+            for(int j = 0; j < triangles_N; j++)
+            {
+                Triangle t = Triangle(triangles_[j][0], triangles_[j][1], triangles_[j][2]);
+                if(!hit_triangle(shadow_ray, t, max_t, min_t, hit_r))
+                {
+                    float angle = dot(hits[t_index].normal, shadow_ray.direction);
+                    float len = length(l.position - shadow_ray.origin);
+                    color += angle * l.color * (1/(len*len));
+                }
+                next_j++;
+            }
+            // spheres
             for(int j = 0; j < spheresN; j++)
             {
                 Sphere s = Sphere(vec3(spheres[j].r, spheres[j].g, spheres[j].b), spheres[j].a);
@@ -273,13 +329,7 @@ void main(void)
                     float len = length(l.position - shadow_ray.origin);
                     color += angle * l.color * (1/(len*len));
                 }
-            }
-
-            if(!hit_triangle(shadow_ray, tri, max_t, min_t, hit_r))
-            {
-                float angle = dot(hits[t_index].normal, shadow_ray.direction);
-                float len = length(l.position - shadow_ray.origin);
-                color += angle * l.color * (1/(len*len));
+                next_j++;
             }
         }
     }

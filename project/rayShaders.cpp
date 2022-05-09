@@ -31,21 +31,70 @@ GLfloat texCoords[] = {
 unsigned int vertexArrayObjID;
 unsigned int texCoordArrayObjID;
 GLuint program;
-GLfloat spheresN = 3;
-GLfloat spheres[4][4] = {
-  {0.0, 0.0, 4.0, 1.0},
+GLfloat planesN = 6;
+GLfloat planes[6][2][3] = {
+    {{0.0, 0.0, -1.0}, {0.0, 0.0, -1.0}},
+    {{0.0, -1.0, 0.0}, {0.0, -1.0, 0.0}},
+    {{0.0, 0.0, 7.0}, {0.0, 0.0, 1.0}},
+    {{0.0, 3.0, 0.0}, {0.0, 1.0, 0.0}},
+    {{-3.0, 0.0, 0.0}, {-1.0, 0.0, 0.0}},
+    {{3.0, 0.0, 0.0}, {1.0, 0.0, 0.0}},
+};
+GLfloat triangles_N = 0;
+GLfloat triangles_[6][3][3] = {
+    {{3.0, 0.5, 3.0},
+     {2.5, -0.5, 3.5},
+     {3.5, -0.5, 3.5}},
+
+    {{3.0, 0.5, 3.0},
+     {3.5, -0.5, 3.5},
+     {3.5, -0.5, 2.5}},
+
+    {{3.0, 0.5, 3.0},
+     {3.5, -0.5, 2.5},
+     {2.5, -0.5, 2.5}},
+
+    {{3.0, 0.5, 3.0},
+     {2.5, -0.5, 2.5},
+     {2.5, -0.5, 3.5}},
+
+    {{2.5, -0.5, 2.5},
+     {3.5, -0.5, 2.5},
+     {2.5, -0.5, 3.5}},
+
+    {{3.5, 0.5, 2.5},
+     {3.5, -0.5, 3.5},
+     {2.5, -0.5, 3.5}},
+};
+GLfloat spheresN = 2;
+GLfloat spheres[2][4] = {
+  {0.0, 0.0, 5.5, 1.0},
   {0.0, 1.0, 3.0, 0.2},
-  {0.0, -102, 4.0, 100.0},
-  {0.0, -1000.0, 4.0, 100.0},
 };
 GLfloat lightN = 3;
 GLfloat lights[6][3] = {
-  {0.0, 2.0, 4.0},
-  {0.5, 0.0, 0.0},
-  {0.0, 2.0, 0.0},
-  {0.0, 0.0, 1.0},
-  {0.0, 0.0, 4.0},
-  {0.0, 1.0, 0.0},
+  {9.0, 3.2, 4.0},
+  {9.0, 2.0, 0.0},
+  {9.0, 0.0, 2.0},
+};
+GLfloat colors[17][3] = {
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0},
+    {0.0, 0.0, 1.0},
 };
 
 void init(void){
@@ -101,17 +150,18 @@ void display(void){
   printError("mid-display");
 
   spheres[1][1] = cos(t/2) * 1.5;
-  spheres[1][2] = sin(t/2) * 1.5 + 4;
-  // sphere1[0] = sin(t);
-  lights[4][0] = cos(t/3) * 15;
-  // lights[0][0] = sin(t);
+  spheres[1][2] = sin(t/2) * 1.5 + 5.5;
+  //lights[2][0] = cos(t/3) * 15;
 
-  // lights[2][1] = sin(t)*10;
-
+  glUniform1i(glGetUniformLocation(program, "planesN"), planesN);
+  glUniformMatrix2x3fv(glGetUniformLocation(program, "planes"), planesN, GL_FALSE, (GLfloat*) planes[0]);
+  glUniform1i(glGetUniformLocation(program, "triangles_N"), triangles_N);
+  glUniformMatrix3fv(glGetUniformLocation(program, "triangles_"), triangles_N, GL_FALSE, (GLfloat*) triangles_[0]);
   glUniform1i(glGetUniformLocation(program, "spheresN"), spheresN);
   glUniform4fv(glGetUniformLocation(program, "spheres"), spheresN, (GLfloat*) spheres[0]);
   glUniform1i(glGetUniformLocation(program, "lightN"), lightN);
-  glUniform3fv(glGetUniformLocation(program, "lights"), lightN*2, (GLfloat*) lights[0]);
+  glUniform3fv(glGetUniformLocation(program, "lights"), lightN, (GLfloat*) lights[0]);
+  glUniform3fv(glGetUniformLocation(program, "colors"), planesN + triangles_N + spheresN + lightN, (GLfloat*) colors[0]);
 
   printError("display");
 
