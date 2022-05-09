@@ -11,7 +11,7 @@ in vec2 texCoord;
 out vec4 out_Color;
 
 uniform mat2x3 planes[10];
-uniform mat3 triangles_[10];
+uniform mat3x3 triangles_[10];
 uniform vec4 spheres[10];
 uniform vec3 lights[10];
 
@@ -122,10 +122,10 @@ bool within_triangle(in vec3 p, in Triangle t)
     float beta = A2 / A;
     float gamma = A3 / A;
 
-    if(alpha >= 0.0 && alpha <= 1.0 &&
-       beta >= 0.0 && beta <= 1.0 &&
-       gamma >= 0.0 && gamma <= 1.0 &&
-       alpha + beta + gamma - 1 < 0.00001)
+    if(alpha >= 0.01 && alpha <= 1.01 &&
+       beta >= 0.01 && beta <= 1.01 &&
+       gamma >= 0.01 && gamma <= 1.01 &&
+       alpha + beta + gamma - 1 < 0.01)
     {
         return true;
     }
@@ -296,7 +296,7 @@ void main(void)
     {
         for(int i = 0; i < lightN; i++)
         {
-            Light l = Light(lights[i], colors[planesN + triangles_N + spheresN - 1 + i]);
+            Light l = Light(lights[i], colors[i]);
 
             Ray shadow_ray = get_shadow_ray(hits[t_index].point, l);
 
@@ -314,7 +314,7 @@ void main(void)
             // triangles
             for(int j = 0; j < triangles_N; j++)
             {
-                if(hitting){ color = vec3(0.0, 1.0, 0.0); break; }
+                if(hitting){ break; }
                 Triangle t = Triangle(triangles_[j][0], triangles_[j][1], triangles_[j][2]);
                 hitting = hit_triangle(shadow_ray, t, shadow_ray.len, min_t, hit_r);
             }
@@ -329,7 +329,7 @@ void main(void)
             {
                 float angle = dot(hits[t_index].normal, shadow_ray.direction);
                 float len = length(l.position - shadow_ray.origin);
-                color += angle * l.color * (1/(len*len));
+                color += angle * l.color * (1/(len));
             }
         }
     }

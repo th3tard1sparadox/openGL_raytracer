@@ -40,61 +40,89 @@ GLfloat planes[6][2][3] = {
     {{-3.0, 0.0, 0.0}, {1.0, 0.0, 0.0}},
     {{3.0, 0.0, 0.0}, {-1.0, 0.0, 0.0}},
 };
-GLfloat triangles_N = 6;
+GLfloat triangles_N = 2;
 GLfloat triangles_[6][3][3] = {
-    {{3.0, 0.5, 3.0},
-     {2.5, -0.5, 3.5},
-     {3.5, -0.5, 3.5}},
+  0.0, 0.5, 3.0,
+   -0.5, -0.5, 2.5,
+   -0.5, -0.5, 3.5,
 
-    {{3.0, 0.5, 3.0},
-     {3.5, -0.5, 3.5},
-     {3.5, -0.5, 2.5}},
+  10.0, 0.5, 3.0,
+   10.5, -0.5, 3.5,
+   10.5, -0.5, 2.5,
 
-    {{3.0, 0.5, 3.0},
-     {3.5, -0.5, 2.5},
-     {2.5, -0.5, 2.5}},
+  0.5, -0.5, 2.5,
+   0.5, -0.5, 3.5,
+   -0.5, -0.5, 3.5,
 
-    {{3.0, 0.5, 3.0},
-     {2.5, -0.5, 2.5},
-     {2.5, -0.5, 3.5}},
+  -0.5, -0.5, 2.5,
+   0.5, -0.5, 2.5,
+   -0.5, -0.5, 3.5,
 
-    {{2.5, -0.5, 2.5},
-     {3.5, -0.5, 2.5},
-     {2.5, -0.5, 3.5}},
+  0.0, 0.5, 3.0,
+   0.5, -0.5, 2.5,
+   -0.5, -0.5, 2.5,
 
-    {{3.5, 0.5, 2.5},
-     {3.5, -0.5, 3.5},
-     {2.5, -0.5, 3.5}},
+  0.0, 0.5, 3.0,
+   -0.5, -0.5, 3.5,
+   0.5, -0.5, 3.5,
+
 };
-GLfloat spheresN = 2;
+// GLfloat triangles_[6][3][3] = {
+//   {{0.0, 0.5, 3.0},
+//    {-0.5, -0.5, 2.5},
+//    {-0.5, -0.5, 3.5}},
+
+//   {{0.0, 0.5, 3.0},
+//    {0.5, -0.5, 3.5},
+//    {0.5, -0.5, 2.5}},
+
+//   {{0.5, -0.5, 2.5},
+//    {0.5, -0.5, 3.5},
+//    {-0.5, -0.5, 3.5}},
+
+//   {{-0.5, -0.5, 2.5},
+//    {0.5, -0.5, 2.5},
+//    {-0.5, -0.5, 3.5}},
+
+//   {{0.0, 0.5, 3.0},
+//    {0.5, -0.5, 2.5},
+//    {-0.5, -0.5, 2.5}},
+
+//   {{0.0, 0.5, 3.0},
+//    {-0.5, -0.5, 3.5},
+//    {0.5, -0.5, 3.5}},
+
+// };
+GLfloat spheresN = 0;
 GLfloat spheres[2][4] = {
   {0.0, 0.0, 4.5, 1.0},
   {0.0, 1.0, 3.0, 0.2},
 };
-GLfloat lightN = 1;
+GLfloat lightN = 3;
 GLfloat lights[6][3] = {
   {0.0, 0.0, 7.0},
-  {0.0, 0.0, 6.0},
-  {0.0, 0.0, 5.5},
+  {0.0, 2.0, 2.0},
+  {2.0, -2.0, 4.5},
 };
 GLfloat colors[17][3] = {
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
-    {1.0, 1.0, 1.0},
     {1.0, 0.0, 0.0},
     {0.0, 1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+    {1.0, 1.0, 1.0},
+
 };
 
 void init(void){
@@ -154,9 +182,9 @@ void display(void){
   //lights[2][0] = cos(t/3) * 15;
 
   glUniform1i(glGetUniformLocation(program, "planesN"), planesN);
-  glUniformMatrix2x3fv(glGetUniformLocation(program, "planes"), planesN, GL_FALSE, (GLfloat*) planes[0]);
+  glUniformMatrix2x3fv(glGetUniformLocation(program, "planes"), planesN, GL_FALSE, (GLfloat*) planes[0][0]);
   glUniform1i(glGetUniformLocation(program, "triangles_N"), triangles_N);
-  glUniformMatrix3fv(glGetUniformLocation(program, "triangles_"), triangles_N, GL_FALSE, (GLfloat*) triangles_[0]);
+  glUniformMatrix3fv(glGetUniformLocation(program, "triangles_"), triangles_N, GL_FALSE, (GLfloat*) triangles_[0][0]);
   glUniform1i(glGetUniformLocation(program, "spheresN"), spheresN);
   glUniform4fv(glGetUniformLocation(program, "spheres"), spheresN, (GLfloat*) spheres[0]);
   glUniform1i(glGetUniformLocation(program, "lightN"), lightN);
