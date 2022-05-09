@@ -103,7 +103,7 @@ void display(void){
   spheres[1][1] = cos(t/2) * 1.5;
   spheres[1][2] = sin(t/2) * 1.5 + 4;
   // sphere1[0] = sin(t);
-  lights[4][0] = cos(t) * 15;
+  lights[4][0] = cos(t/3) * 15;
   // lights[0][0] = sin(t);
 
   // lights[2][1] = sin(t)*10;

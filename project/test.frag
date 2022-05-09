@@ -67,7 +67,7 @@ vec3 ray_at(in Ray r, in float t)
 
 vec3 get_triangle_normal(in Triangle t)
 {
-    return normalize(cross((t.p2 - t.p1), (t.p3 - t.p1)));
+    return -normalize(cross((t.p2 - t.p1), (t.p3 - t.p1)));
 }
 
 Plane get_plane(in Triangle t)
@@ -244,7 +244,7 @@ void main(void)
     }
 
     // triangles
-    Triangle tri = Triangle(vec3(0.0, 1.0, 4.5), vec3(-0.5, 2.0, 3.0), vec3(0.5, 2.0, 3.0));
+    Triangle tri = Triangle(vec3(0.5, 0.5, 3.0), vec3(-0.5, 0.5, 3.0), vec3(0.0, 0.0, 2.0));
     if(hit_triangle(r, tri, max_t, min_t, hits[spheresN]))
     {
         if(length(hits[spheresN].point) < t_smallest)
