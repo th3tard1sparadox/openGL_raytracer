@@ -122,10 +122,10 @@ bool within_triangle(in vec3 p, in Triangle t)
     float beta = A2 / A;
     float gamma = A3 / A;
 
-    if(alpha >= 0.01 && alpha <= 1.01 &&
-       beta >= 0.01 && beta <= 1.01 &&
-       gamma >= 0.01 && gamma <= 1.01 &&
-       alpha + beta + gamma - 1 < 0.01)
+    if(alpha >= 0.00001 && alpha <= 1.00001 &&
+       beta >= 0.00001 && beta <= 1.00001 &&
+       gamma >= 0.00001 && gamma <= 1.00001 &&
+       alpha + beta + gamma - 1 < 0.00001)
     {
         return true;
     }
@@ -245,6 +245,8 @@ void main(void)
     HitRecord hits[30];
     int t_index = -1;
     vec3 color = vec3(0.0, 0.0, 0.0);
+    int hits_at = 0;
+    int hit_obj = -1;
 
     // planes
     for(int i = 0; i < planesN; i++)
@@ -257,36 +259,43 @@ void main(void)
             {
                 t_smallest = length(hits[i].point);
                 t_index = i;
+                hit_obj = 1;
             }
         }
     }
+
+    hits_at += planesN;
 
     // triangles
     for(int i = 0; i < triangles_N; i++)
     {
         Triangle t = Triangle(triangles_[i][0], triangles_[i][1], triangles_[i][2]);
 
-        if(hit_triangle(r, t, max_t, min_t, hits[i]))
+        if(hit_triangle(r, t, max_t, min_t, hits[i + hits_at]))
         {
-            if(length(hits[i].point) < t_smallest)
+            if(length(hits[i + hits_at].point) < t_smallest)
             {
-                t_smallest = length(hits[i].point);
-                t_index = i;
+                t_smallest = length(hits[i + hits_at].point);
+                t_index = i + hits_at;
+                hit_obj = 2;
             }
         }
     }
+
+    hits_at += triangles_N;
 
     // spheres
     for(int i = 0; i < spheresN; i++)
     {
         Sphere s = Sphere(vec3(spheres[i].r, spheres[i].g, spheres[i].b), spheres[i].a);
 
-        if(hit_sphere(r, s, max_t, min_t, hits[i]))
+        if(hit_sphere(r, s, max_t, min_t, hits[i + hits_at]))
         {
-            if(length(hits[i].point) < t_smallest)
+            if(length(hits[i + hits_at].point) < t_smallest)
             {
-                t_smallest = length(hits[i].point);
-                t_index = i;
+                t_smallest = length(hits[i + hits_at].point);
+                t_index = i + hits_at;
+                hit_obj = 3;
             }
         }
     }
@@ -321,15 +330,16 @@ void main(void)
             // spheres
             for(int j = 0; j < spheresN; j++)
             {
-                if(hitting){  break; }
+                if(hitting){ break; }
                 Sphere s = Sphere(vec3(spheres[j].r, spheres[j].g, spheres[j].b), spheres[j].a);
                 hitting = hit_sphere(shadow_ray, s, shadow_ray.len, min_t, hit_r);
             }
             if(!hitting)
             {
+                vec3 obj_color = colors[lightN + t_index];
                 float angle = dot(hits[t_index].normal, shadow_ray.direction);
                 float len = length(l.position - shadow_ray.origin);
-                color += angle * l.color * (1/(len));
+                color += angle * l.color * obj_color * (1/(len*len));
             }
         }
     }
