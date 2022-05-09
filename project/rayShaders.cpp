@@ -33,14 +33,14 @@ unsigned int texCoordArrayObjID;
 GLuint program;
 GLfloat planesN = 6;
 GLfloat planes[6][2][3] = {
-    {{0.0, 0.0, -1.0}, {0.0, 0.0, -1.0}},
-    {{0.0, -1.0, 0.0}, {0.0, -1.0, 0.0}},
-    {{0.0, 0.0, 7.0}, {0.0, 0.0, 1.0}},
-    {{0.0, 3.0, 0.0}, {0.0, 1.0, 0.0}},
-    {{-3.0, 0.0, 0.0}, {-1.0, 0.0, 0.0}},
-    {{3.0, 0.0, 0.0}, {1.0, 0.0, 0.0}},
+    {{0.0, 0.0, -1.0}, {0.0, 0.0, 1.0}},
+    {{0.0, 0.0, 7.5}, {0.0, 0.0, -1.0}},
+    {{0.0, -3.0, 0.0}, {0.0, 1.0, 0.0}},
+    {{0.0, 3.0, 0.0}, {0.0, -1.0, 0.0}},
+    {{-3.0, 0.0, 0.0}, {1.0, 0.0, 0.0}},
+    {{3.0, 0.0, 0.0}, {-1.0, 0.0, 0.0}},
 };
-GLfloat triangles_N = 0;
+GLfloat triangles_N = 6;
 GLfloat triangles_[6][3][3] = {
     {{3.0, 0.5, 3.0},
      {2.5, -0.5, 3.5},
@@ -68,14 +68,14 @@ GLfloat triangles_[6][3][3] = {
 };
 GLfloat spheresN = 2;
 GLfloat spheres[2][4] = {
-  {0.0, 0.0, 5.5, 1.0},
+  {0.0, 0.0, 4.5, 1.0},
   {0.0, 1.0, 3.0, 0.2},
 };
-GLfloat lightN = 3;
+GLfloat lightN = 1;
 GLfloat lights[6][3] = {
-  {9.0, 3.2, 4.0},
-  {9.0, 2.0, 0.0},
-  {9.0, 0.0, 2.0},
+  {0.0, 0.0, 7.0},
+  {0.0, 0.0, 6.0},
+  {0.0, 0.0, 5.5},
 };
 GLfloat colors[17][3] = {
     {1.0, 1.0, 1.0},
@@ -108,7 +108,7 @@ void init(void){
 
   printError("GL inits");
 
-  program = loadShaders("rayShaders.vert", "test.frag");
+  program = loadShaders("rayShaders.vert", "rayShaders.frag");
   printError("Program");
 
   // Allocate and activate Vertex Array Object
@@ -150,7 +150,7 @@ void display(void){
   printError("mid-display");
 
   spheres[1][1] = cos(t/2) * 1.5;
-  spheres[1][2] = sin(t/2) * 1.5 + 5.5;
+  spheres[1][2] = sin(t/2) * 1.5 + 4.5;
   //lights[2][0] = cos(t/3) * 15;
 
   glUniform1i(glGetUniformLocation(program, "planesN"), planesN);
