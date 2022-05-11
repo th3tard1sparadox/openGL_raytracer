@@ -42,6 +42,7 @@ struct HitRecord
     vec3 normal;
     float t;
     bool front_face;
+    bool light;
 };
 
 struct Light
@@ -148,6 +149,7 @@ bool hit_plane(in Ray r, in Plane p, in float max_t, in float min_t, inout HitRe
                 h.front_face = false;
                 h.normal = - p.normal;
             }
+            h.light = false;
 
             return true;
         }
@@ -170,7 +172,7 @@ bool hit_triangle(in Ray r, in Triangle t, in float max_t, in float min_t, inout
     return false;
 }
 
-bool hit_sphere(in Ray r, in Sphere s, in float max_t, in float min_t, inout HitRecord h)
+bool hit_sphere(in Ray r, in Sphere s, in float max_t, in float min_t, inout HitRecord h, in bool light)
 {
     // math
     vec3 L = s.center - r.origin;
@@ -220,6 +222,7 @@ bool hit_sphere(in Ray r, in Sphere s, in float max_t, in float min_t, inout Hit
         h.front_face = false;
         h.normal = - h.normal;
     }
+    h.light = light;
 
     return true;
 }
@@ -242,23 +245,39 @@ void main(void)
     Ray r = get_camera_ray(texCoord.x, texCoord.y, focal_length);
 
     float t_smallest = max_t;
-    HitRecord hits[30];
+    HitRecord hits[40];
     int t_index = -1;
     vec3 color = vec3(0.0, 0.0, 0.0);
     int hits_at = 0;
     int hit_obj = -1;
+
+    for(int i = 0; i < lightN; i++)
+    {
+        Sphere s = Sphere(lights[i], 0.01);
+        if(hit_sphere(r, s, max_t, min_t, hits[i], true))
+        {
+            if(length(hits[i + hits_at].point) < t_smallest)
+            {
+                t_smallest = length(hits[i].point);
+                t_index = i;
+                hit_obj = 0;
+            }
+        }
+    }
+
+    hits_at += lightN;
 
     // planes
     for(int i = 0; i < planesN; i++)
     {
         Plane p = Plane(planes[i][0], planes[i][1]);
 
-        if(hit_plane(r, p, max_t, min_t, hits[i]))
+        if(hit_plane(r, p, max_t, min_t, hits[i + hits_at]))
         {
-            if(length(hits[i].point) < t_smallest)
+            if(length(hits[i + hits_at].point) < t_smallest)
             {
-                t_smallest = length(hits[i].point);
-                t_index = i;
+                t_smallest = length(hits[i + hits_at].point);
+                t_index = i + hits_at;
                 hit_obj = 1;
             }
         }
@@ -289,7 +308,7 @@ void main(void)
     {
         Sphere s = Sphere(vec3(spheres[i].r, spheres[i].g, spheres[i].b), spheres[i].a);
 
-        if(hit_sphere(r, s, max_t, min_t, hits[i + hits_at]))
+        if(hit_sphere(r, s, max_t, min_t, hits[i + hits_at], false))
         {
             if(length(hits[i + hits_at].point) < t_smallest)
             {
@@ -308,6 +327,12 @@ void main(void)
             Light l = Light(lights[i], colors[i]);
 
             Ray shadow_ray = get_shadow_ray(hits[t_index].point, l);
+
+            if(hits[t_index].light)
+            {
+                color = colors[t_index];
+                break;
+            }
 
             int next_j = 0;
             HitRecord hit_r;
@@ -332,11 +357,11 @@ void main(void)
             {
                 if(hitting){ break; }
                 Sphere s = Sphere(vec3(spheres[j].r, spheres[j].g, spheres[j].b), spheres[j].a);
-                hitting = hit_sphere(shadow_ray, s, shadow_ray.len, min_t, hit_r);
+                hitting = hit_sphere(shadow_ray, s, shadow_ray.len, min_t, hit_r, false);
             }
             if(!hitting)
             {
-                vec3 obj_color = colors[lightN + t_index];
+                vec3 obj_color = colors[t_index];
                 float angle = dot(hits[t_index].normal, shadow_ray.direction);
                 float len = length(l.position - shadow_ray.origin);
                 color += angle * l.color * obj_color * (1/(len*len));
