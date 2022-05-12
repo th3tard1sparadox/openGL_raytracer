@@ -13,6 +13,7 @@ out vec4 out_Color;
 uniform mat2x3 planes[10];
 uniform mat3x3 triangles_[10];
 uniform vec4 spheres[10];
+uniform mat2x3 bbox;
 uniform vec3 lights[10];
 
 uniform vec3 colors[40];
@@ -34,6 +35,12 @@ struct Sphere
 {
     vec3 center;
     float radius;
+};
+
+struct BBox
+{
+   vec3 point_min;
+   vec3 point_max;
 };
 
 struct HitRecord
@@ -172,6 +179,28 @@ bool hit_triangle(in Ray r, in Triangle t, in float max_t, in float min_t, inout
     return false;
 }
 
+bool hit_bbox(in Ray r, in BBox b, in float max_t, in float min_t)
+{
+   float tmin, tmax, t1, t2, t3, t4, t5, t6;
+
+   t1 = (b.point_min.x - r.origin.x) / r.direction.x;
+   t2 = (b.point_max.x - r.origin.x) / r.direction.x;
+   t3 = (b.point_min.y - r.origin.y) / r.direction.y;
+   t4 = (b.point_max.y - r.origin.y) / r.direction.y;
+   t5 = (b.point_min.z - r.origin.z) / r.direction.z;
+   t6 = (b.point_max.z - r.origin.z) / r.direction.z;
+
+   tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+   tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+   if(tmax < 0.0 || tmin > tmax)
+   {
+      return false;
+   }
+
+   return true;
+}
+
 bool hit_sphere(in Ray r, in Sphere s, in float max_t, in float min_t, inout HitRecord h, in bool light)
 {
     // math
@@ -249,18 +278,16 @@ void main(void)
     int t_index = -1;
     vec3 color = vec3(0.0, 0.0, 0.0);
     int hits_at = 0;
-    int hit_obj = -1;
 
     for(int i = 0; i < lightN; i++)
     {
-        Sphere s = Sphere(lights[i], 0.01);
+        Sphere s = Sphere(lights[i], 0.02);
         if(hit_sphere(r, s, max_t, min_t, hits[i], true))
         {
             if(length(hits[i + hits_at].point) < t_smallest)
             {
                 t_smallest = length(hits[i].point);
                 t_index = i;
-                hit_obj = 0;
             }
         }
     }
@@ -278,28 +305,32 @@ void main(void)
             {
                 t_smallest = length(hits[i + hits_at].point);
                 t_index = i + hits_at;
-                hit_obj = 1;
             }
         }
     }
 
     hits_at += planesN;
 
-    // triangles
-    for(int i = 0; i < triangles_N; i++)
+    BBox b = BBox(bbox[0], bbox[1]);
+ 
+    if(hit_bbox(r, b, max_t, min_t))
     {
-        Triangle t = Triangle(triangles_[i][0], triangles_[i][1], triangles_[i][2]);
+       // triangles
+       for(int i = 0; i < triangles_N; i++)
+       {
+          Triangle t = Triangle(triangles_[i][0], triangles_[i][1], triangles_[i][2]);
 
-        if(hit_triangle(r, t, max_t, min_t, hits[i + hits_at]))
-        {
-            if(length(hits[i + hits_at].point) < t_smallest)
-            {
+          if(hit_triangle(r, t, max_t, min_t, hits[i + hits_at]))
+          {
+             if(length(hits[i + hits_at].point) < t_smallest)
+             {
                 t_smallest = length(hits[i + hits_at].point);
                 t_index = i + hits_at;
-                hit_obj = 2;
-            }
-        }
+             }
+          }
+       }
     }
+
 
     hits_at += triangles_N;
 
@@ -314,7 +345,6 @@ void main(void)
             {
                 t_smallest = length(hits[i + hits_at].point);
                 t_index = i + hits_at;
-                hit_obj = 3;
             }
         }
     }

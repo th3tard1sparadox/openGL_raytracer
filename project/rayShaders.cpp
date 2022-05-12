@@ -72,23 +72,29 @@ GLfloat spheres[2][4] = {
   {0.0, 0.0, 4.5, 0.1},
   {0.0, 1.0, 3.0, 0.2},
 };
-GLfloat lightN = 4;
-GLfloat lights[4][3] = {
+GLfloat bbox[2][3] = {
+  {-0.5, -0.5, 4.5},
+  {0.5, 0.5, 5.5},
+};
+GLfloat lightN = 5;
+GLfloat lights[5][3] = {
+  {0.0, 0.0, 0.0},
   {-2.0, 2.0, 7.0},
   {1.2, -1.0, 5.0},
   {-0.1, 0.0, 2.9},
   {0.0, 1.0, 5.0}
 };
-GLfloat colors[18][3] = {
+GLfloat colors[19][3] = {
+    {5.0, 5.0, 5.0},
     {0.0, 0.3, 0.6},
-    {1.0, 1.0, 1.0},
+    {2.0, 0.5, 2.0},
     {1.0, 1.0, 1.0},
     {0.2, 1.0, 0.2},
 
     {1.0, 0.0, 0.0},
-    {0.0, 0.0, 1.0},
-    {0.0, 1.0, 0.0},
     {1.0, 1.0, 0.0},
+    {0.0, 1.0, 0.0},
+    {0.0, 0.0, 1.0},
     {1.0, 0.0, 1.0},
     {0.0, 1.0, 1.0},
 
@@ -111,6 +117,7 @@ void init(void){
   dumpInfo();
 
   glClearColor(0.5,0.2,0.5,0);
+  glEnable(GL_MULTISAMPLE);
 
   printError("GL inits");
 
@@ -165,6 +172,7 @@ void display(void){
   glUniformMatrix3fv(glGetUniformLocation(program, "triangles_"), triangles_N, GL_FALSE, (GLfloat*) triangles_[0][0]);
   glUniform1i(glGetUniformLocation(program, "spheresN"), spheresN);
   glUniform4fv(glGetUniformLocation(program, "spheres"), spheresN, (GLfloat*) spheres[0]);
+  glUniform4fv(glGetUniformLocation(program, "bbox"), 1, (GLfloat*) bbox);
   glUniform1i(glGetUniformLocation(program, "lightN"), lightN);
   glUniform3fv(glGetUniformLocation(program, "lights"), lightN, (GLfloat*) lights[0]);
   glUniform3fv(glGetUniformLocation(program, "colors"), planesN + triangles_N + spheresN + lightN, (GLfloat*) colors[0]);
