@@ -374,7 +374,7 @@ void main(void)
                 Plane p = Plane(planes[j][0], planes[j][1]);
                 hitting = hit_plane(shadow_ray, p, shadow_ray.len, min_t, hit_r);
             }
-            if(hit_bbox(r, b, max_t, min_t))
+            if(hit_bbox(shadow_ray, b, max_t, min_t))
             {
                 // triangles
                 for(int j = 0; j < triangles_N; j++)
