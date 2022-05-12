@@ -198,7 +198,7 @@ bool hit_bbox(in Ray r, in BBox b, in float max_t, in float min_t)
       return false;
    }
 
-   return false;
+   return true;
 }
 
 bool hit_sphere(in Ray r, in Sphere s, in float max_t, in float min_t, inout HitRecord h, in bool light)
