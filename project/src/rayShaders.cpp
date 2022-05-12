@@ -165,7 +165,7 @@ void init(void){
 
   printError("GL inits");
 
-  program = loadShaders("rayShaders.vert", "rayShaders.frag");
+  program = loadShaders("src/rayShaders.vert", "src/rayShaders.frag");
   printError("Program");
 
   // Allocate and activate Vertex Array Object
@@ -217,10 +217,10 @@ void display(void){
   xRotGL[4] = (float)sin(t);
   xRotGL[5] = (float)cos(t);
 
-  zRotGL[5] = (float)cos(t);
-  zRotGL[6] = (float)-sin(t);
-  zRotGL[9] = (float)sin(t);
-  zRotGL[10] = (float)cos(t);
+  zRotGL[5] = (float)cos(t*1.5);
+  zRotGL[6] = (float)-sin(t*1.5);
+  zRotGL[9] = (float)sin(t*1.5);
+  zRotGL[10] = (float)cos(t*1.5);
 
   for(int i = 0; i < triangles_N; i++){
     for(int j = 0; j < 3; j++){
