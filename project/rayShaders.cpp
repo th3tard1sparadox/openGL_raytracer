@@ -172,7 +172,7 @@ void display(void){
   glUniformMatrix3fv(glGetUniformLocation(program, "triangles_"), triangles_N, GL_FALSE, (GLfloat*) triangles_[0][0]);
   glUniform1i(glGetUniformLocation(program, "spheresN"), spheresN);
   glUniform4fv(glGetUniformLocation(program, "spheres"), spheresN, (GLfloat*) spheres[0]);
-  glUniform4fv(glGetUniformLocation(program, "bbox"), 1, (GLfloat*) bbox);
+  glUniformMatrix2x3fv(glGetUniformLocation(program, "bbox"), 1, GL_FALSE, (GLfloat*) bbox);
   glUniform1i(glGetUniformLocation(program, "lightN"), lightN);
   glUniform3fv(glGetUniformLocation(program, "lights"), lightN, (GLfloat*) lights[0]);
   glUniform3fv(glGetUniformLocation(program, "colors"), planesN + triangles_N + spheresN + lightN, (GLfloat*) colors[0]);

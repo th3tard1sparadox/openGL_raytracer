@@ -193,12 +193,12 @@ bool hit_bbox(in Ray r, in BBox b, in float max_t, in float min_t)
    tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
    tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
 
-   if(tmax < 0.0 || tmin > tmax)
+   if(tmax < min_t || tmin > tmax || tmax > max_t)
    {
       return false;
    }
 
-   return true;
+   return false;
 }
 
 bool hit_sphere(in Ray r, in Sphere s, in float max_t, in float min_t, inout HitRecord h, in bool light)
@@ -312,7 +312,7 @@ void main(void)
     hits_at += planesN;
 
     BBox b = BBox(bbox[0], bbox[1]);
- 
+
     if(hit_bbox(r, b, max_t, min_t))
     {
        // triangles
@@ -373,14 +373,16 @@ void main(void)
                 if(hitting){ break; }
                 Plane p = Plane(planes[j][0], planes[j][1]);
                 hitting = hit_plane(shadow_ray, p, shadow_ray.len, min_t, hit_r);
-                // color += vec3(1.0, 0.0, 0.0);
             }
-            // triangles
-            for(int j = 0; j < triangles_N; j++)
+            if(hit_bbox(r, b, max_t, min_t))
             {
-                if(hitting){ break; }
-                Triangle t = Triangle(triangles_[j][0], triangles_[j][1], triangles_[j][2]);
-                hitting = hit_triangle(shadow_ray, t, shadow_ray.len, min_t, hit_r);
+                // triangles
+                for(int j = 0; j < triangles_N; j++)
+                {
+                    if(hitting){ break; }
+                    Triangle t = Triangle(triangles_[j][0], triangles_[j][1], triangles_[j][2]);
+                    hitting = hit_triangle(shadow_ray, t, shadow_ray.len, min_t, hit_r);
+                }
             }
             // spheres
             for(int j = 0; j < spheresN; j++)
